@@ -70,6 +70,14 @@ export default function GameInterface() {
 		choiceB: "Seek emergency international aid and food imports",
 	});
 
+	const previueMsgs = useState([
+		{
+			role: "assistent",
+			content:
+				"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
+		},
+	]);
+
 	const choiseScenarios = useState({
 		choiceA: {
 			situation: "",
@@ -136,7 +144,7 @@ export default function GameInterface() {
 			}
 			setDayCount((prev) => prev - 1);
 
-			fetchNextScenario().then((s) => console.log(s));
+			fetchNextScenario(preve).then((s) => console.log(s));
 			fetchNextScenario().then((s) => console.log(s));
 
 			// Move to next scenario
