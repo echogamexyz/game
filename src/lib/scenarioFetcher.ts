@@ -19,9 +19,14 @@ export const fetchNextScenario = async (messages: any) => {
 			{
 				role: "system",
 				content:
-					"Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-6 words. The response options should present different approaches to handling the situation.",
+					"Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation.",
 			},
 			...messages,
+			{
+				role: "user",
+				content:
+					"That is what i will do. Generate now the next scenario, and the 2 response options",
+			},
 		],
 	});
 

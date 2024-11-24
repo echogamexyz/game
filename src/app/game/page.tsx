@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -80,16 +80,22 @@ export default function GameInterface() {
 
 	const [choiseScenarios, setChoiseScenarios] = useState({
 		choiceA: {
-			situation: "",
-			choiceA: "",
-			choiceB: "",
+			situation:
+				"Neighboring countries are mobilizing troops near your border, and intelligence suggests a potential invasion is imminent. Your military is currently undermanned and underfunded.",
+			choiceA: "Diplomatic negotiations",
+			choiceB: "Rapid military buildup",
 		},
 		choiceB: {
-			situation: "",
-			choiceA: "",
-			choiceB: "",
+			situation:
+				"International aid organizations have arrived with emergency food supplies, but rebel groups are threatening to block the distribution routes, claiming political corruption.",
+			choiceA: "Negotiate with rebels",
+			choiceB: "Military escort",
 		},
 	});
+
+	useEffect(() => {
+		console.log(choiseScenarios);
+	}, [choiseScenarios]);
 
 	const controls = useAnimation();
 
@@ -143,13 +149,24 @@ export default function GameInterface() {
 			//     nature: Math.max(0, prev.nature - 5),
 			//   }));
 			// }
+			let localCurrentScenario = {};
+			if (info.offset.x > 0) {
+				localCurrentScenario = choiseScenarios.choiceA;
+				setCurrentScenario(choiseScenarios.choiceA);
+			} else {
+				localCurrentScenario = choiseScenarios.choiceB;
+				setCurrentScenario(choiseScenarios.choiceB);
+			}
+
+			console.log("current", currentScenario);
+
 			setDayCount((prev) => prev + 1);
 
 			fetchNextScenario([
 				...previueMsgs,
 				{
 					role: "user",
-					content: currentScenario.choiceA,
+					content: localCurrentScenario.choiceA,
 				},
 			]).then((s) => {
 				setChoiseScenarios((p) => ({
@@ -167,7 +184,7 @@ export default function GameInterface() {
 				...previueMsgs,
 				{
 					role: "user",
-					content: currentScenario.choiceB,
+					content: localCurrentScenario.choiceB,
 				},
 			]).then((s) =>
 				setChoiseScenarios((p) => ({
@@ -219,7 +236,7 @@ export default function GameInterface() {
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
 				<p className="text-center mb-8 font-mono">
-					{scenarios[currentScenarioIndex].description}
+					{currentScenario.situation}
 				</p>
 
 				{/* Swipeable Cards */}
