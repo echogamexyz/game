@@ -63,14 +63,14 @@ export default function GameInterface() {
 		economy: 50,
 	});
 
-	const currentScenario = useState({
+	const [currentScenario, setCurrentScenario] = useState({
 		situation:
 			"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
 		choiceA: "Implement strict food rationing and conservation measures",
 		choiceB: "Seek emergency international aid and food imports",
 	});
 
-	const previueMsgs = useState([
+	const [previueMsgs, setPreviueMsgs] = useState([
 		{
 			role: "assistent",
 			content:
@@ -78,7 +78,7 @@ export default function GameInterface() {
 		},
 	]);
 
-	const choiseScenarios = useState({
+	const [choiseScenarios, setChoiseScenarios] = useState({
 		choiceA: {
 			situation: "",
 			choiceA: "",
@@ -144,8 +144,41 @@ export default function GameInterface() {
 			}
 			setDayCount((prev) => prev - 1);
 
-			fetchNextScenario(preve).then((s) => console.log(s));
-			fetchNextScenario().then((s) => console.log(s));
+			fetchNextScenario([
+				...previueMsgs,
+				{
+					role: "user",
+					content: currentScenario.choiceA,
+				},
+			]).then((s) => {
+				setChoiseScenarios((p) => ({
+					...p,
+					choiceA: {
+						...s,
+						situation: s.situation || "",
+						choiceA: s.choiceA || "",
+						choiceB: s.choiceB || "",
+					},
+				}));
+				console.log(s);
+			});
+			fetchNextScenario([
+				...previueMsgs,
+				{
+					role: "user",
+					content: currentScenario.choiceB,
+				},
+			]).then((s) =>
+				setChoiseScenarios((p) => ({
+					...p,
+					choiceB: {
+						...s,
+						situation: s.situation || "",
+						choiceA: s.choiceA || "",
+						choiceB: s.choiceB || "",
+					},
+				}))
+			);
 
 			// Move to next scenario
 			setCurrentScenarioIndex(
