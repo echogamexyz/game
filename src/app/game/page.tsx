@@ -18,8 +18,9 @@ const THROW_VELOCITY = 750;
 interface Scenario {
   id: number;
   description: string;
-  decision: string;
-  character: string;
+  decision_one: string;
+  decision_two: string;
+  decision_chosen: number | null;
 }
 
 const scenarios: Scenario[] = [
@@ -27,22 +28,25 @@ const scenarios: Scenario[] = [
     id: 1,
     description:
       "It seems that some homeless people live in the ruins of a nuclear power station. Some are disfigured by radiation. People are afraid of them.",
-    decision: "Send them away",
-    character: "Governor Armstrong",
+    decision_one: "Help the homeless",
+    decision_two: "Expel the homeless",
+    decision_chosen: 1,
   },
   {
     id: 2,
     description:
       "A group of scientists claim they can restore some of the damaged ecosystem, but it will require significant resources.",
-    decision: "Fund the project",
-    character: "Dr. Elara Chen",
+    decision_one: "Fund the restoration",
+    decision_two: "Reject the restoration",
+    decision_chosen: 2,
   },
   {
     id: 3,
     description:
       "Neighboring settlements are becoming increasingly hostile. They eye our resources with envy.",
-    decision: "Strengthen defenses",
-    character: "General Hawk",
+    decision_one: "Build defenses",
+    decision_two: "Seek diplomacy",
+    decision_chosen: null,
   },
   // Add more scenarios as needed
 ];
@@ -195,10 +199,10 @@ export default function GameInterface() {
                           <div className="w-32 h-32 bg-neutral-800 rounded-full" />
                         </div>
                         <p className="text-center text-lg font-mono mt-4">
-                          {scenario.decision}
+                          {scenario.decision_one}
                         </p>
                         <p className="text-center font-mono mt-2">
-                          {scenario.character}
+                          {scenario.decision_two}
                         </p>
                       </div>
                     </motion.div>
