@@ -154,7 +154,7 @@ export default function GameInterface() {
 				choiceA: "",
 				choiceB: "",
 			};
-			if (info.offset.x > 0) {
+			if (info.offset.x < 0) {
 				localCurrentScenario = choiseScenarios.choiceA;
 				setCurrentScenario(choiseScenarios.choiceA);
 			} else {
