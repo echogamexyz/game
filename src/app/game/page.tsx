@@ -9,9 +9,9 @@ import {
 	AnimatePresence,
 } from "framer-motion";
 import { Leaf, User2, Shield, DollarSign } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-import { fetchNextScenario } from "@/lib/scenarioFetcher";
+import { Progress } from "../../components/ui/progress";
+import { fetchNextScenario } from "../../lib/scenarioFetcher";
+import { cn } from "../../lib/utils";
 
 const DRAG_THRESHOLD = 200;
 const THROW_VELOCITY = 750;
