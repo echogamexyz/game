@@ -4,8 +4,9 @@ import { z } from "zod";
 import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 
+console.time("generateText");
 const { object } = await generateObject({
-  model: anthropic("claude-3-opus-20240229"),
+  model: anthropic("claude-3-haiku-20240307"),
   schema: z.object({
     situation: z.string(),
     choiceA: z.string(),
@@ -23,10 +24,22 @@ const { object } = await generateObject({
 	]
 });
 
+// const { text } = await generateText({
+// 	model: anthropic("claude-3-5-sonnet-20241022"),
+// 	prompt: "Write a vegetarian lasagna recipe for 4 people.",
+// });
+
+console.timeEnd("generateText");
 console.log(object);
 
 const page = () => {
-	return <div>{JSON.stringify(object)}</div>;
+	return (
+		<div>
+			<p>Situation: {object.situation}</p>
+			<p>Choice A: {object.choiceA}</p>
+			<p>Choice B: {object.choiceB}</p>
+		</div>
+	);
 };
 
 export default page;
