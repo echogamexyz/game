@@ -6,6 +6,7 @@ import { z } from "zod";
 import { anthropic } from "@ai-sdk/anthropic";
 
 export const fetchNextScenario = async (messages: any) => {
+	console.log("msg", messages);
 	const { object } = await generateObject({
 		model: anthropic("claude-3-5-haiku-20241022"),
 		schema: z.object({
