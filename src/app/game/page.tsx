@@ -63,8 +63,20 @@ export default function GameInterface() {
 		economy: 50,
 	});
 
+	const currentScenario = useState({
+		situation:
+			"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
+		choiceA: "Implement strict food rationing and conservation measures",
+		choiceB: "Seek emergency international aid and food imports",
+	});
+
 	const choiseScenarios = useState({
 		choiceA: {
+			situation: "",
+			choiceA: "",
+			choiceB: "",
+		},
+		choiceB: {
 			situation: "",
 			choiceA: "",
 			choiceB: "",
@@ -124,6 +136,7 @@ export default function GameInterface() {
 			}
 			setDayCount((prev) => prev - 1);
 
+			fetchNextScenario().then((s) => console.log(s));
 			fetchNextScenario().then((s) => console.log(s));
 
 			// Move to next scenario
