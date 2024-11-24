@@ -53,7 +53,7 @@ const scenarios: Scenario[] = [
 ];
 
 export default function GameInterface() {
-  const [dayCount, setDayCount] = useState(36);
+  const [dayCount, setDayCount] = useState(0);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [stats, setStats] = useState({
@@ -100,7 +100,6 @@ export default function GameInterface() {
     [x, y],
     ([latestX, latestY]) => Number(latestX) * 0.05 + Number(latestY) * 0.05
   );
-  const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
   const handleDragEnd = async (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -130,20 +129,20 @@ export default function GameInterface() {
       });
 
       // Update stats based on swipe direction (simplified for this example)
-      if (info.offset.x > 0) {
-        setStats((prev) => ({
-          ...prev,
-          social: Math.min(100, prev.social + 10),
-          economy: Math.min(100, prev.economy + 5),
-        }));
-      } else {
-        setStats((prev) => ({
-          ...prev,
-          military: Math.min(100, prev.military + 10),
-          nature: Math.max(0, prev.nature - 5),
-        }));
-      }
-      setDayCount((prev) => prev - 1);
+      // if (info.offset.x > 0) {
+      //   setStats((prev) => ({
+      //     ...prev,
+      //     social: Math.min(100, prev.social + 10),
+      //     economy: Math.min(100, prev.economy + 5),
+      //   }));
+      // } else {
+      //   setStats((prev) => ({
+      //     ...prev,
+      //     military: Math.min(100, prev.military + 10),
+      //     nature: Math.max(0, prev.nature - 5),
+      //   }));
+      // }
+      setDayCount((prev) => prev + 1);
 
 			fetchNextScenario([
 				...previueMsgs,
