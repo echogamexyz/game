@@ -162,7 +162,15 @@ export default function GameInterface() {
 				setCurrentScenario(choiseScenarios.choiceB);
 			}
 
-			console.log("current", currentScenario);
+			setPreviueMsgs((prev) => [
+				...prev,
+				{
+					role: "assistant",
+					content: localCurrentScenario.situation,
+				},
+			]);
+
+			console.log("current", localCurrentScenario);
 
 			setDayCount((prev) => prev + 1);
 
