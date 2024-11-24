@@ -273,8 +273,8 @@ export default function GameInterface() {
           </AnimatePresence>
         </div>
         <div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
-          <h1 >{currentScenario[0].choiceA}</h1>
-          <h1>{currentScenario[0].choiceB}</h1>
+          <h1 >{currentScenario.choiceA}</h1>
+          <h1>{currentScenario.choiceB}</h1>
         </div>
         {/* Year and Days Counter */}
         <div className="mt-8 text-center font-mono">
