@@ -72,7 +72,7 @@ export default function GameInterface() {
 
 	const [previueMsgs, setPreviueMsgs] = useState([
 		{
-			role: "assistent",
+			role: "assistant",
 			content:
 				"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
 		},
@@ -129,21 +129,21 @@ export default function GameInterface() {
 				transition: { duration: 0.5 },
 			});
 
-      // Update stats based on swipe direction (simplified for this example)
-      // if (info.offset.x > 0) {
-      //   setStats((prev) => ({
-      //     ...prev,
-      //     social: Math.min(100, prev.social + 10),
-      //     economy: Math.min(100, prev.economy + 5),
-      //   }));
-      // } else {
-      //   setStats((prev) => ({
-      //     ...prev,
-      //     military: Math.min(100, prev.military + 10),
-      //     nature: Math.max(0, prev.nature - 5),
-      //   }));
-      // }
-      setDayCount((prev) => prev + 1);
+			// Update stats based on swipe direction (simplified for this example)
+			// if (info.offset.x > 0) {
+			//   setStats((prev) => ({
+			//     ...prev,
+			//     social: Math.min(100, prev.social + 10),
+			//     economy: Math.min(100, prev.economy + 5),
+			//   }));
+			// } else {
+			//   setStats((prev) => ({
+			//     ...prev,
+			//     military: Math.min(100, prev.military + 10),
+			//     nature: Math.max(0, prev.nature - 5),
+			//   }));
+			// }
+			setDayCount((prev) => prev + 1);
 
 			fetchNextScenario([
 				...previueMsgs,
