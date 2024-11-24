@@ -63,6 +63,14 @@ export default function GameInterface() {
 		economy: 50,
 	});
 
+	const choiseScenarios = useState({
+		choiceA: {
+			situation: "",
+			choiceA: "",
+			choiceB: "",
+		},
+	});
+
 	const controls = useAnimation();
 
 	// Card motion values
@@ -83,7 +91,6 @@ export default function GameInterface() {
 		const offset = Math.sqrt(info.offset.x ** 2 + info.offset.y ** 2);
 		const velocity = Math.sqrt(info.velocity.x ** 2 + info.velocity.y ** 2);
 		console.log("fetchNextScenario");
-		fetchNextScenario().then((s) => console.log(s));
 
 		if (
 			(offset > DRAG_THRESHOLD || velocity > THROW_VELOCITY) &&
@@ -116,6 +123,8 @@ export default function GameInterface() {
 				}));
 			}
 			setDayCount((prev) => prev - 1);
+
+			fetchNextScenario().then((s) => console.log(s));
 
 			// Move to next scenario
 			setCurrentScenarioIndex(
