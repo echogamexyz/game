@@ -65,7 +65,7 @@ export default function GameInterface() {
   const y = useMotionValue(0);
   const rotate = useTransform(
     [x, y],
-    ([latestX, latestY]) => latestX * 0.05 + latestY * 0.05
+    ([latestX, latestY]) => Number(latestX) * 0.05 + Number(latestY) * 0.05
   );
 
   const handleDragEnd = async (
