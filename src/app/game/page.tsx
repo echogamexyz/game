@@ -65,31 +65,31 @@ export default function GameInterface() {
 
 	const [currentScenario, setCurrentScenario] = useState({
 		situation:
-			"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
-		choiceA: "Build defenses",
-		choiceB: "Seek diplomacy",
+			"A severe drought has crippled your nation's agriculture, causing widespread food shortages. International aid is available but requires the removal of key environmental regulations.",
+		choiceA: "Accept aid",
+		choiceB: "Reject aid",
 	});
 
 	const [previueMsgs, setPreviueMsgs] = useState([
 		{
 			role: "assistant",
 			content:
-				"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
+				"A severe drought has crippled your nation's agriculture, causing widespread food shortages. International aid is available but requires the removal of key environmental regulations.",
 		},
 	]);
 
 	const [choiseScenarios, setChoiseScenarios] = useState({
 		choiceA: {
 			situation:
-				"Neighboring countries are mobilizing troops near your border, and intelligence suggests a potential invasion is imminent. Your military is currently undermanned and underfunded.",
-			choiceA: "Diplomatic negotiations",
-			choiceB: "Rapid military buildup",
+				"By accepting the aid, food supplies are restored, stabilizing the immediate crisis. However, the removal of environmental regulations has sparked protests among environmental groups and led to concerns about long-term ecological damage.",
+			choiceA: "Enforce future regulations",
+			choiceB: "Focus on economy",
 		},
 		choiceB: {
 			situation:
-				"International aid organizations have arrived with emergency food supplies, but rebel groups are threatening to block the distribution routes, claiming political corruption.",
-			choiceA: "Negotiate with rebels",
-			choiceB: "Military escort",
+				"Mass protests erupt in your capital city after rejecting foreign aid during the drought. Protesters demand immediate action, while government officials propose increasing taxes to fund emergency food imports.",
+			choiceA: "Approve emergency tax increase",
+			choiceB: "Deploy military to quell protests",
 		},
 	});
 
