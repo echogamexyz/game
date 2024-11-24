@@ -63,25 +63,33 @@ export default function GameInterface() {
     economy: 50,
   });
 
-  const currentScenario = useState({
+  const [currentScenario, setCurrentScenario] = useState({
     situation:
       "The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
     choiceA: "Build defenses",
     choiceB: "Seek diplomacy",
   });
 
-  const choiseScenarios = useState({
-    choiceA: {
-      situation: "",
-      choiceA: "",
-      choiceB: "",
-    },
-    choiceB: {
-      situation: "",
-      choiceA: "",
-      choiceB: "",
-    },
-  });
+	const [previueMsgs, setPreviueMsgs] = useState([
+		{
+			role: "assistent",
+			content:
+				"The country is facing a severe drought, and the food supply is running low. The people are getting restless.",
+		},
+	]);
+
+	const [choiseScenarios, setChoiseScenarios] = useState({
+		choiceA: {
+			situation: "",
+			choiceA: "",
+			choiceB: "",
+		},
+		choiceB: {
+			situation: "",
+			choiceA: "",
+			choiceB: "",
+		},
+	});
 
   const controls = useAnimation();
 
@@ -137,8 +145,41 @@ export default function GameInterface() {
       }
       setDayCount((prev) => prev - 1);
 
-      fetchNextScenario().then((s) => console.log(s));
-      fetchNextScenario().then((s) => console.log(s));
+			fetchNextScenario([
+				...previueMsgs,
+				{
+					role: "user",
+					content: currentScenario.choiceA,
+				},
+			]).then((s) => {
+				setChoiseScenarios((p) => ({
+					...p,
+					choiceA: {
+						...s,
+						situation: s.situation || "",
+						choiceA: s.choiceA || "",
+						choiceB: s.choiceB || "",
+					},
+				}));
+				console.log(s);
+			});
+			fetchNextScenario([
+				...previueMsgs,
+				{
+					role: "user",
+					content: currentScenario.choiceB,
+				},
+			]).then((s) =>
+				setChoiseScenarios((p) => ({
+					...p,
+					choiceB: {
+						...s,
+						situation: s.situation || "",
+						choiceA: s.choiceA || "",
+						choiceB: s.choiceB || "",
+					},
+				}))
+			);
 
       // Move to next scenario
       setCurrentScenarioIndex(
