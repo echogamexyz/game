@@ -149,7 +149,11 @@ export default function GameInterface() {
 			//     nature: Math.max(0, prev.nature - 5),
 			//   }));
 			// }
-			let localCurrentScenario = {};
+			let localCurrentScenario = {
+				situation: "",
+				choiceA: "",
+				choiceB: "",
+			};
 			if (info.offset.x > 0) {
 				localCurrentScenario = choiseScenarios.choiceA;
 				setCurrentScenario(choiseScenarios.choiceA);
