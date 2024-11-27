@@ -116,20 +116,6 @@ export default function GameInterface() {
 				transition: { duration: 0.5 },
 			});
 
-			// Update stats based on swipe direction (simplified for this example)
-			// if (info.offset.x > 0) {
-			//   setStats((prev) => ({
-			//     ...prev,
-			//     social: Math.min(100, prev.social + 10),
-			//     economy: Math.min(100, prev.economy + 5),
-			//   }));
-			// } else {
-			//   setStats((prev) => ({
-			//     ...prev,
-			//     military: Math.min(100, prev.military + 10),
-			//     nature: Math.max(0, prev.nature - 5),
-			//   }));
-			// }
 			const isSwipingLeft = info.offset.x < 0;
 			const selectedScenario = isSwipingLeft
 				? choiseScenarios.current.optionA
