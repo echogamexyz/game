@@ -121,15 +121,20 @@ export default function GameInterface() {
 				? choiseScenarios.current.optionA
 				: choiseScenarios.current.optionB;
 
-			setCurrentScenario(selectedScenario);
-
 			previueMsgs.current = [
 				...previueMsgs.current,
+				{
+					role: "user",
+					content: isSwipingLeft
+						? currentScenario.optionA
+						: currentScenario.optionB,
+				},
 				{
 					role: "assistant",
 					content: selectedScenario.situation,
 				},
 			];
+			setCurrentScenario(selectedScenario);
 
 			console.log("current", selectedScenario);
 
@@ -147,7 +152,7 @@ export default function GameInterface() {
 						...choiseScenarios.current,
 						[key]: normalizeScenario(s),
 					};
-					console.log(s);
+					console.log(key, ":", s);
 				});
 			});
 
