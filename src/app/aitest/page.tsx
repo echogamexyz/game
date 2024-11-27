@@ -9,8 +9,8 @@ const { object } = await generateObject({
 	model: anthropic("claude-3-haiku-20240307"),
 	schema: z.object({
 		situation: z.string(),
-		option_a: z.string(),
-		option_b: z.string(),
+		optionA: z.string(),
+		optionB: z.string(),
 	}),
 	messages: [
 		{
@@ -38,8 +38,8 @@ const page = () => {
 	return (
 		<div>
 			<p>Situation: {object.situation}</p>
-			<p>Choice A: {object.option_a}</p>
-			<p>Choice B: {object.option_b}</p>
+			<p>Choice A: {object.optionA}</p>
+			<p>Choice B: {object.optionB}</p>
 		</div>
 	);
 };

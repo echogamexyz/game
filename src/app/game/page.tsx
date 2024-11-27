@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -11,10 +11,27 @@ import {
 import { Leaf, User2, Shield, DollarSign } from "lucide-react";
 import { Progress } from "../../components/ui/progress";
 import { fetchNextScenario } from "../../lib/scenarioFetcher";
-import { cn } from "../../lib/utils";
+import { cn, normalizeScenario } from "../../lib/utils";
 
 const DRAG_THRESHOLD = 200;
 const THROW_VELOCITY = 750;
+
+interface Scenario {
+	id: number;
+}
+
+const scenarios: Scenario[] = [
+	{
+		id: 1,
+	},
+	{
+		id: 2,
+	},
+	{
+		id: 3,
+	},
+	// Add more scenarios as needed
+];
 
 export default function GameInterface() {
 	const [dayCount, setDayCount] = useState(0);
@@ -30,11 +47,11 @@ export default function GameInterface() {
 	const [currentScenario, setCurrentScenario] = useState({
 		situation:
 			"A severe drought has crippled your nation's agriculture, causing widespread food shortages. International aid is available but requires the removal of key environmental regulations.",
-		option_a: "Accept aid",
-		option_b: "Reject aid",
+		optionA: "Accept aid",
+		optionB: "Reject aid",
 	});
 
-	const [previueMsgs, setPreviueMsgs] = useState([
+	const previueMsgs = useRef([
 		{
 			role: "assistant",
 			content:
@@ -42,18 +59,18 @@ export default function GameInterface() {
 		},
 	]);
 
-	const [choiseScenarios, setChoiseScenarios] = useState({
-		option_a: {
+	const choiseScenarios = useRef({
+		optionA: {
 			situation:
 				"By accepting the aid, food supplies are restored, stabilizing the immediate crisis. However, the removal of environmental regulations has sparked protests among environmental groups and led to concerns about long-term ecological damage.",
-			option_a: "Enforce future regulations",
-			option_b: "Focus on economy",
+			optionA: "Enforce future regulations",
+			optionB: "Focus on economy",
 		},
-		option_b: {
+		optionB: {
 			situation:
 				"Mass protests erupt in your capital city after rejecting foreign aid during the drought. Protesters demand immediate action, while government officials propose increasing taxes to fund emergency food imports.",
-			option_a: "Approve emergency tax increase",
-			option_b: "Deploy military to quell protests",
+			optionA: "Approve emergency tax increase",
+			optionB: "Deploy military to quell protests",
 		},
 	});
 
@@ -70,7 +87,7 @@ export default function GameInterface() {
 		[x, y],
 		([latestX, latestY]) => Number(latestX) * 0.05 + Number(latestY) * 0.05
 	);
-	const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
+	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
 	const handleDragEnd = async (
 		event: MouseEvent | TouchEvent | PointerEvent,
@@ -113,66 +130,40 @@ export default function GameInterface() {
 			//     nature: Math.max(0, prev.nature - 5),
 			//   }));
 			// }
-			let localCurrentScenario = {
-				situation: "",
-				option_a: "",
-				option_b: "",
-			};
-			if (info.offset.x < 0) {
-				localCurrentScenario = choiseScenarios.option_a;
-				setCurrentScenario(choiseScenarios.option_a);
-			} else {
-				localCurrentScenario = choiseScenarios.option_b;
-				setCurrentScenario(choiseScenarios.option_b);
-			}
+			const isSwipingLeft = info.offset.x < 0;
+			const selectedScenario = isSwipingLeft
+				? choiseScenarios.current.optionA
+				: choiseScenarios.current.optionB;
 
-			setPreviueMsgs((prev) => [
-				...prev,
+			setCurrentScenario(selectedScenario);
+
+			previueMsgs.current = [
+				...previueMsgs.current,
 				{
 					role: "assistant",
-					content: localCurrentScenario.situation,
+					content: selectedScenario.situation,
 				},
-			]);
+			];
 
-			console.log("current", localCurrentScenario);
+			console.log("current", selectedScenario);
 
 			setDayCount((prev) => prev + 1);
 
-			fetchNextScenario([
-				...previueMsgs,
-				{
-					role: "user",
-					content: localCurrentScenario.option_a,
-				},
-			]).then((s) => {
-				setChoiseScenarios((p) => ({
-					...p,
-					option_a: {
-						...s,
-						situation: s.situation || "",
-						option_a: s.option_a || "",
-						option_b: s.option_b || "",
+			["optionA", "optionB"].map((key) => {
+				fetchNextScenario([
+					...previueMsgs.current,
+					{
+						role: "user",
+						content: selectedScenario[key],
 					},
-				}));
-				console.log(s);
+				]).then((s) => {
+					choiseScenarios.current = {
+						...choiseScenarios.current,
+						[key]: normalizeScenario(s),
+					};
+					console.log(s);
+				});
 			});
-			fetchNextScenario([
-				...previueMsgs,
-				{
-					role: "user",
-					content: localCurrentScenario.option_b,
-				},
-			]).then((s) =>
-				setChoiseScenarios((p) => ({
-					...p,
-					option_b: {
-						...s,
-						situation: s.situation || "",
-						option_a: s.option_a || "",
-						option_b: s.option_b || "",
-					},
-				}))
-			);
 
 			// Move to next scenario
 			setCurrentScenarioIndex(
@@ -266,8 +257,8 @@ export default function GameInterface() {
 					</AnimatePresence>
 				</div>
 				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
-					<h1>{currentScenario.option_a}</h1>
-					<h1>{currentScenario.option_b}</h1>
+					<h1>{currentScenario.optionA}</h1>
+					<h1>{currentScenario.optionB}</h1>
 				</div>
 				{/* Year and Days Counter */}
 				<div className="mt-8 text-center font-mono">
