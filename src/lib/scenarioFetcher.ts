@@ -11,8 +11,8 @@ export const fetchNextScenario = async (messages: any) => {
 		model: anthropic("claude-3-5-haiku-20241022"),
 		schema: z.object({
 			situation: z.string(),
-			choiceA: z.string(),
-			choiceB: z.string(),
+			option_a: z.string(),
+			option_b: z.string(),
 		}),
 
 		messages: [

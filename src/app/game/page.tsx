@@ -16,42 +16,6 @@ import { cn } from "../../lib/utils";
 const DRAG_THRESHOLD = 200;
 const THROW_VELOCITY = 750;
 
-interface Scenario {
-	id: number;
-	description: string;
-	decision_one: string;
-	decision_two: string;
-	decision_chosen: number | null;
-}
-
-const scenarios: Scenario[] = [
-	{
-		id: 1,
-		description:
-			"It seems that some homeless people live in the ruins of a nuclear power station. Some are disfigured by radiation. People are afraid of them.",
-		decision_one: "Help the homeless",
-		decision_two: "Expel the homeless",
-		decision_chosen: 1,
-	},
-	{
-		id: 2,
-		description:
-			"A group of scientists claim they can restore some of the damaged ecosystem, but it will require significant resources.",
-		decision_one: "Fund the restoration",
-		decision_two: "Reject the restoration",
-		decision_chosen: 2,
-	},
-	{
-		id: 3,
-		description:
-			"Neighboring settlements are becoming increasingly hostile. They eye our resources with envy.",
-		decision_one: "Build defenses",
-		decision_two: "Seek diplomacy",
-		decision_chosen: null,
-	},
-	// Add more scenarios as needed
-];
-
 export default function GameInterface() {
 	const [dayCount, setDayCount] = useState(0);
 	const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
@@ -66,8 +30,8 @@ export default function GameInterface() {
 	const [currentScenario, setCurrentScenario] = useState({
 		situation:
 			"A severe drought has crippled your nation's agriculture, causing widespread food shortages. International aid is available but requires the removal of key environmental regulations.",
-		choiceA: "Accept aid",
-		choiceB: "Reject aid",
+		option_a: "Accept aid",
+		option_b: "Reject aid",
 	});
 
 	const [previueMsgs, setPreviueMsgs] = useState([
@@ -79,17 +43,17 @@ export default function GameInterface() {
 	]);
 
 	const [choiseScenarios, setChoiseScenarios] = useState({
-		choiceA: {
+		option_a: {
 			situation:
 				"By accepting the aid, food supplies are restored, stabilizing the immediate crisis. However, the removal of environmental regulations has sparked protests among environmental groups and led to concerns about long-term ecological damage.",
-			choiceA: "Enforce future regulations",
-			choiceB: "Focus on economy",
+			option_a: "Enforce future regulations",
+			option_b: "Focus on economy",
 		},
-		choiceB: {
+		option_b: {
 			situation:
 				"Mass protests erupt in your capital city after rejecting foreign aid during the drought. Protesters demand immediate action, while government officials propose increasing taxes to fund emergency food imports.",
-			choiceA: "Approve emergency tax increase",
-			choiceB: "Deploy military to quell protests",
+			option_a: "Approve emergency tax increase",
+			option_b: "Deploy military to quell protests",
 		},
 	});
 
@@ -151,15 +115,15 @@ export default function GameInterface() {
 			// }
 			let localCurrentScenario = {
 				situation: "",
-				choiceA: "",
-				choiceB: "",
+				option_a: "",
+				option_b: "",
 			};
 			if (info.offset.x < 0) {
-				localCurrentScenario = choiseScenarios.choiceA;
-				setCurrentScenario(choiseScenarios.choiceA);
+				localCurrentScenario = choiseScenarios.option_a;
+				setCurrentScenario(choiseScenarios.option_a);
 			} else {
-				localCurrentScenario = choiseScenarios.choiceB;
-				setCurrentScenario(choiseScenarios.choiceB);
+				localCurrentScenario = choiseScenarios.option_b;
+				setCurrentScenario(choiseScenarios.option_b);
 			}
 
 			setPreviueMsgs((prev) => [
@@ -178,16 +142,16 @@ export default function GameInterface() {
 				...previueMsgs,
 				{
 					role: "user",
-					content: localCurrentScenario.choiceA,
+					content: localCurrentScenario.option_a,
 				},
 			]).then((s) => {
 				setChoiseScenarios((p) => ({
 					...p,
-					choiceA: {
+					option_a: {
 						...s,
 						situation: s.situation || "",
-						choiceA: s.choiceA || "",
-						choiceB: s.choiceB || "",
+						option_a: s.option_a || "",
+						option_b: s.option_b || "",
 					},
 				}));
 				console.log(s);
@@ -196,16 +160,16 @@ export default function GameInterface() {
 				...previueMsgs,
 				{
 					role: "user",
-					content: localCurrentScenario.choiceB,
+					content: localCurrentScenario.option_b,
 				},
 			]).then((s) =>
 				setChoiseScenarios((p) => ({
 					...p,
-					choiceB: {
+					option_b: {
 						...s,
 						situation: s.situation || "",
-						choiceA: s.choiceA || "",
-						choiceB: s.choiceB || "",
+						option_a: s.option_a || "",
+						option_b: s.option_b || "",
 					},
 				}))
 			);
@@ -302,8 +266,8 @@ export default function GameInterface() {
 					</AnimatePresence>
 				</div>
 				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
-					<h1>{currentScenario.choiceA}</h1>
-					<h1>{currentScenario.choiceB}</h1>
+					<h1>{currentScenario.option_a}</h1>
+					<h1>{currentScenario.option_b}</h1>
 				</div>
 				{/* Year and Days Counter */}
 				<div className="mt-8 text-center font-mono">
