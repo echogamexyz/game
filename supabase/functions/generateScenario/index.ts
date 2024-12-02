@@ -1,3 +1,4 @@
+/// <reference lib="deno.ns" />
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { generateObject } from "npm:ai";
 import { z } from "npm:zod";
@@ -8,8 +9,6 @@ const SYSTEMPROMPT = "Create a brief current event scenario (2-3 sentences) for 
 const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
 
-const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY! });
-
 const schema = z.object({
   messages: z.array(z.object({
     role: z.string(),
@@ -17,11 +16,19 @@ const schema = z.object({
   })),
 });
 
+let anthropic = null
+
 Deno.serve(async (req) => {
+  if (ANTHROPIC_API_KEY) {
+    anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY! });
+  } else {
+    return new Response("Invalid config", { status: 500 })
+  }
+
   // CORS & method validation
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
-  } else if (req.method !== "GET") {
+  } else if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
 
@@ -49,7 +56,6 @@ Deno.serve(async (req) => {
 			optionA: z.string(),
 			optionB: z.string(),
 		}),
-
 		messages: [
       {
         role: "system",
