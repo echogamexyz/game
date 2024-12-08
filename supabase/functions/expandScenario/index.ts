@@ -1,6 +1,6 @@
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import { Database } from "../_shared/database.types.ts";
-import { CoreMessage } from "npm:ai";
+import { CoreMessage, GenerateObjectResult } from "npm:ai";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { generateObject } from "npm:ai";
 import { z } from "npm:zod";
@@ -11,6 +11,7 @@ const SYSTEMPROMPT =
 const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
 
 Deno.serve(async (req) => {
+  const SCENARIO_TO_EXPAND = 8;
   try {
     const supabase = createClient<Database>(
       Deno.env.get("URL") ?? "",
@@ -24,45 +25,59 @@ Deno.serve(async (req) => {
       },
     );
 
-    const { data, error } = await supabase.rpc("get_linked_rows", {
-      start_id: 5,
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    const prevuisScenarios: CoreMessage[] = data?.flatMap((d) => {
-      const content = d.content as { text: string } | null;
-
-      const assistantMsg: CoreMessage = {
-        role: "assistant",
-        content: content?.text ?? "",
-      };
-      if (d.leading_choice != null) {
-        return [{ role: "user", content: d.leading_choice }, assistantMsg];
-      } else {
-        return [assistantMsg];
-      }
-    });
-
     const choices =
-      (await supabase.from("cards").select("id, leading_choice").eq(
+      (await supabase.from("cards").select("id, leading_choice, content").eq(
         "parent",
-        5,
+        SCENARIO_TO_EXPAND,
       )).data;
 
+    let prevuisScenarios: null | CoreMessage[] = null;
+
     const result = await Promise.all(
-      choices?.map(async ({ id, leading_choice }) => {
-        const pMsgs: CoreMessage[] = [...prevuisScenarios, {
-          role: "user",
-          content: leading_choice?.toString() ?? "",
-        }];
-        console.log(id);
-        const r = await generateScenario(pMsgs);
-        console.log(r);
-        return r;
-      }) ?? [],
+      choices?.map(
+        async ({ id, leading_choice, content }) => {
+          if (content != null) {
+            console.log("already generated scenarios");
+            const { data } = await supabase.from("cards").select(
+              "leading_choice, id",
+            )
+              .eq("parent", id);
+            content = content as { text: string };
+            if (data == null || data.length == 0) {
+              throw new Error("No options for the scenario");
+            }
+            return clientScenario(content.text as string, data);
+          }
+          if (prevuisScenarios == null) {
+            prevuisScenarios = await getPreviousScenarios(
+              supabase,
+              SCENARIO_TO_EXPAND,
+            );
+          }
+
+          const pMsgs: CoreMessage[] = [
+            ...prevuisScenarios,
+            {
+              role: "user",
+              content: leading_choice?.toString() ?? "",
+            },
+          ];
+          console.log(id);
+          const r = await generateScenario(pMsgs);
+
+          await supabase.from("cards").update({
+            content: { text: r.object.situation },
+          })
+            .eq("id", id);
+
+          const { data: optionRows } = await supabase.from("cards").insert([{
+            parent: id,
+            leading_choice: r.object.optionA,
+          }, { parent: id, leading_choice: r.object.optionB }]).select();
+
+          return clientScenario(r.object.situation, optionRows);
+        },
+      ) ?? [],
     );
 
     return new Response(
@@ -70,6 +85,7 @@ Deno.serve(async (req) => {
         data: [
           result,
         ],
+        prevuisScenarios,
       }),
       {
         headers: { "Content-Type": "application/json" },
@@ -81,7 +97,15 @@ Deno.serve(async (req) => {
   }
 });
 
-async function generateScenario(messages: CoreMessage[]) {
+async function generateScenario(
+  messages: CoreMessage[],
+): Promise<
+  GenerateObjectResult<{
+    situation: string;
+    optionA: string;
+    optionB: string;
+  }>
+> {
   const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
   if (!ANTHROPIC_API_KEY) {
     throw new Error("Invalid config");
@@ -104,4 +128,45 @@ async function generateScenario(messages: CoreMessage[]) {
   });
   console.log(object);
   return object;
+}
+
+const clientScenario = (
+  situation: string,
+  optionRows: { leading_choice: string | null; id: number }[],
+) => (
+  {
+    situation,
+    optionA: { text: optionRows[0].leading_choice, id: optionRows[0].id },
+    optionB: { text: optionRows[1].leading_choice, id: optionRows[1].id },
+  }
+);
+
+async function getPreviousScenarios(
+  supabase: SupabaseClient<Database>,
+  startId: number,
+) {
+  const { data, error } = await supabase.rpc("get_linked_rows", {
+    start_id: startId,
+  });
+
+  data?.reverse();
+
+  if (error) {
+    throw error;
+  }
+  const prevuisScenarios: CoreMessage[] = data.flatMap((d) => {
+    const content = d.content as { text: string } | null;
+
+    const assistantMsg: CoreMessage = {
+      role: "assistant",
+      content: content?.text ?? "",
+    };
+    if (d.leading_choice != null) {
+      return [{ role: "user", content: d.leading_choice }, assistantMsg];
+    } else {
+      return [assistantMsg];
+    }
+  });
+
+  return prevuisScenarios;
 }
