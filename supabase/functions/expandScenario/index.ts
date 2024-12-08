@@ -7,11 +7,11 @@ import { z } from "npm:zod";
 import { createAnthropic } from "npm:@ai-sdk/anthropic";
 
 const SYSTEMPROMPT =
-  "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Genereate the NEXT scenario based on the previous scenario";
+  "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Generate the NEXT scenario based on the previous scenario";
 const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
 
 Deno.serve(async (req) => {
-  const SCENARIO_TO_EXPAND = 8;
+  const { scenarioToExpand } = await req.json();
   try {
     const supabase = createClient<Database>(
       Deno.env.get("URL") ?? "",
@@ -28,10 +28,10 @@ Deno.serve(async (req) => {
     const choices =
       (await supabase.from("cards").select("id, leading_choice, content").eq(
         "parent",
-        SCENARIO_TO_EXPAND,
+        scenarioToExpand,
       )).data;
 
-    let prevuisScenarios: null | CoreMessage[] = null;
+    let previousScenarios: null | CoreMessage[] = null;
 
     const result = await Promise.all(
       choices?.map(
@@ -48,15 +48,15 @@ Deno.serve(async (req) => {
             }
             return clientScenario(content.text as string, data);
           }
-          if (prevuisScenarios == null) {
-            prevuisScenarios = await getPreviousScenarios(
+          if (previousScenarios == null) {
+            previousScenarios = await getPreviousScenarios(
               supabase,
-              SCENARIO_TO_EXPAND,
+              scenarioToExpand,
             );
           }
 
           const pMsgs: CoreMessage[] = [
-            ...prevuisScenarios,
+            ...previousScenarios,
             {
               role: "user",
               content: leading_choice?.toString() ?? "",
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
         data: [
           result,
         ],
-        prevuisScenarios,
+        previousScenarios,
       }),
       {
         headers: { "Content-Type": "application/json" },
@@ -154,7 +154,7 @@ async function getPreviousScenarios(
   if (error) {
     throw error;
   }
-  const prevuisScenarios: CoreMessage[] = data.flatMap((d) => {
+  const previousScenarios: CoreMessage[] = data.flatMap((d) => {
     const content = d.content as { text: string } | null;
 
     const assistantMsg: CoreMessage = {
@@ -168,5 +168,5 @@ async function getPreviousScenarios(
     }
   });
 
-  return prevuisScenarios;
+  return previousScenarios;
 }
