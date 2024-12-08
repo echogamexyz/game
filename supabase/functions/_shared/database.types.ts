@@ -12,7 +12,7 @@ export type Database = {
       cards: {
         Row: {
           choices: Json | null
-          content: Json
+          content: Json | null
           created_at: string
           id: number
           leading_choice: string | null
@@ -20,7 +20,7 @@ export type Database = {
         }
         Insert: {
           choices?: Json | null
-          content: Json
+          content?: Json | null
           created_at?: string
           id?: number
           leading_choice?: string | null
@@ -28,7 +28,7 @@ export type Database = {
         }
         Update: {
           choices?: Json | null
-          content?: Json
+          content?: Json | null
           created_at?: string
           id?: number
           leading_choice?: string | null
@@ -127,7 +127,7 @@ export type Database = {
         }
         Returns: {
           choices: Json | null
-          content: Json
+          content: Json | null
           created_at: string
           id: number
           leading_choice: string | null
