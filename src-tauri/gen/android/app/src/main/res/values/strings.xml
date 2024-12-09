@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">echo-app</string>
+    <string name="main_activity_title">echo-app</string>
+</resources>
