@@ -23,5 +23,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/ai/route.ts.old", "src/app/aitest/page.tsx", "src/lib/scenarioFetcher.tsold"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "supabase"]
 }
