@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
-import { Database } from "../_shared/database.types.js";
+import { Database } from "../_shared/database.types.ts";
 import { CoreMessage, GenerateObjectResult } from "npm:ai";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { generateObject } from "npm:ai";
