@@ -36,7 +36,9 @@ export default function GameInterface() {
 		military: 50,
 		economy: 50,
 	});
-	const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>([]);
+	const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
+		[]
+	);
 
 	const supabase = createClient();
 
@@ -57,10 +59,16 @@ export default function GameInterface() {
 	useEffect(() => {
 		const initializeScenario = async () => {
 			try {
-				const { data }: { data: ClientScenario } =
+				
+				const { data, error }: { data: ClientScenario } =
 					await supabase.functions.invoke("generateScenario", {
 						body: { scenarioId: STARTING_SCENARIO_ID },
 					});
+
+				if (error) {
+					throw error;
+				}
+				console.log(data);
 				setCurrentScenario(data);
 
 				// Prefetch the next two scenarios
@@ -197,88 +205,88 @@ export default function GameInterface() {
 	}
 
 	return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Status Bar */}
-      <div className="p-4 flex justify-between items-center max-w-md mx-auto w-full">
-        <StatusIcon icon={Leaf} value={stats.nature} />
-        <StatusIcon icon={User2} value={stats.social} />
-        <StatusIcon icon={Shield} value={stats.military} />
-        <StatusIcon icon={DollarSign} value={stats.economy} />
-      </div>
+		<div className="min-h-screen bg-black text-white flex flex-col">
+			{/* Status Bar */}
+			<div className="p-4 flex justify-between items-center max-w-md mx-auto w-full">
+				<StatusIcon icon={Leaf} value={stats.nature} />
+				<StatusIcon icon={User2} value={stats.social} />
+				<StatusIcon icon={Shield} value={stats.military} />
+				<StatusIcon icon={DollarSign} value={stats.economy} />
+			</div>
 
-      {/* Progress Bar */}
-      <div className="max-w-md mx-auto w-full px-8">
-        <Progress value={33} className="h-2 bg-neutral-800" />
-      </div>
+			{/* Progress Bar */}
+			<div className="max-w-md mx-auto w-full px-8">
+				<Progress value={33} className="h-2 bg-neutral-800" />
+			</div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
-        <p className="text-center mb-8 font-mono">
-          {currentScenario.situation}
-        </p>
+			{/* Main Content */}
+			<div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
+				<p className="text-center mb-8 font-mono">
+					{currentScenario.situation}
+				</p>
 
-        {/* Swipeable Cards */}
-        <div className="relative w-full aspect-[6/7]">
-          <AnimatePresence>
-            {scenarios.map(
-              (scenario, index) =>
-                index >= currentScenarioIndex && (
-                  <motion.div
-                    key={`${scenario.id}-${index}`}
-                    drag={index === currentScenarioIndex && !isAnimating}
-                    dragConstraints={{
-                      top: -100,
-                      bottom: 100,
-                      left: -100,
-                      right: 100,
-                    }}
-                    style={
-                      index === currentScenarioIndex
-                        ? { x, y, zIndex: scenarios.length - index }
-                        : { zIndex: scenarios.length - index }
-                    }
-                    animate={
-                      index === currentScenarioIndex
-                        ? controls
-                        : {
-                            scale: 0.95,
-                            y: (index - currentScenarioIndex) * 20,
-                          }
-                    }
-                    onDragEnd={
-                      index === currentScenarioIndex ? handleDragEnd : undefined
-                    }
-                    whileTap={{ cursor: "grabbing" }}
-                    className="absolute inset-0 touch-none"
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <motion.div
-                      className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl"
-                      style={index === currentScenarioIndex ? { rotate } : {}}
-                    >
-                      <div className="p-6 h-full flex flex-col">
-                        <div className="flex-1 flex items-center justify-center">
-                          <div className="w-32 h-32 bg-neutral-800 rounded-full" />
-                        </div>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                )
-            )}
-          </AnimatePresence>
-        </div>
-        <div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
-          <h1>{currentScenario.optionA.text}</h1>
-          <h1>{currentScenario.optionB.text}</h1>
-        </div>
-        {/* Year and Days Counter */}
-        <div className="mt-8 text-center font-mono">
-          <p className="text-2xl">2075</p>
-          <p className="text-neutral-400">{dayCount} days in power</p>
-        </div>
-      </div>
-    </div>
-  );
+				{/* Swipeable Cards */}
+				<div className="relative w-full aspect-[6/7]">
+					<AnimatePresence>
+						{scenarios.map(
+							(scenario, index) =>
+								index >= currentScenarioIndex && (
+									<motion.div
+										key={`${scenario.id}-${index}`}
+										drag={index === currentScenarioIndex && !isAnimating}
+										dragConstraints={{
+											top: -100,
+											bottom: 100,
+											left: -100,
+											right: 100,
+										}}
+										style={
+											index === currentScenarioIndex
+												? { x, y, zIndex: scenarios.length - index }
+												: { zIndex: scenarios.length - index }
+										}
+										animate={
+											index === currentScenarioIndex
+												? controls
+												: {
+														scale: 0.95,
+														y: (index - currentScenarioIndex) * 20,
+												  }
+										}
+										onDragEnd={
+											index === currentScenarioIndex ? handleDragEnd : undefined
+										}
+										whileTap={{ cursor: "grabbing" }}
+										className="absolute inset-0 touch-none"
+										transition={{ type: "spring", stiffness: 300, damping: 20 }}
+									>
+										<motion.div
+											className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl"
+											style={index === currentScenarioIndex ? { rotate } : {}}
+										>
+											<div className="p-6 h-full flex flex-col">
+												<div className="flex-1 flex items-center justify-center">
+													<div className="w-32 h-32 bg-neutral-800 rounded-full" />
+												</div>
+											</div>
+										</motion.div>
+									</motion.div>
+								)
+						)}
+					</AnimatePresence>
+				</div>
+				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
+					<h1>{currentScenario.optionA.text}</h1>
+					<h1>{currentScenario.optionB.text}</h1>
+				</div>
+				{/* Year and Days Counter */}
+				<div className="mt-8 text-center font-mono">
+					<p className="text-2xl">2075</p>
+					<p className="text-neutral-400">{dayCount} days in power</p>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function StatusIcon({
