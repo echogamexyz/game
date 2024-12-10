@@ -60,8 +60,8 @@ export default function GameInterface() {
 		const initializeScenario = async () => {
 			try {
 				
-				const { data, error }: { data: ClientScenario } =
-					await supabase.functions.invoke("generateScenario", {
+				const { data, error } =
+					await supabase.functions.invoke<ClientScenario>("generateScenario", {
 						body: { scenarioId: STARTING_SCENARIO_ID },
 					});
 
