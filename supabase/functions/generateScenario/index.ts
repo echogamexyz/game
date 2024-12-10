@@ -10,17 +10,22 @@ const SYSTEMPROMPT =
   "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Generate the NEXT scenario based on the previous scenario";
 const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
 
+const SUPABASE_URL = Deno.env.get("URL") ?? Deno.env.get("SUPABASE_URL") ?? "";
+const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY") ??
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
 Deno.serve(async (req) => {
+  console.log(Deno.env.get("URL"));
   // const { scenarioId } = await req.json();
   const scenarioId = 17;
   try {
     const supabase = createClient<Database>(
-      Deno.env.get("URL") ?? "",
-      Deno.env.get("SERVICE_ROLE_KEY") ?? "",
+      SUPABASE_URL,
+      SERVICE_ROLE_KEY,
       {
         global: {
           headers: {
-            Authorization: `Bearer ${Deno.env.get("SERVICE_ROLE_KEY")}`,
+            Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
           },
         },
       },
@@ -125,10 +130,14 @@ async function getScenario(
   supabase: SupabaseClient<Database>,
   scenarioId: number,
 ) {
-  const { data } = await supabase.from("cards").select("*").eq(
+  const { data, error } = await supabase.from("cards").select("*").eq(
     "id",
     scenarioId,
   );
+
+  if (error) {
+    throw error;
+  }
 
   if (data == null || data.length == 0) {
     throw new Error("Could not find that scenario");
