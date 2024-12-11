@@ -34,18 +34,7 @@ const clientScenario = (
 	optionB: { text: optionRows[1].leading_choice, id: optionRows[1].id },
 });
 
-const scenarios = [
-	{
-		id: 1,
-	},
-	{
-		id: 2,
-	},
-	{
-		id: 3,
-	},
-	// Add more scenarios as needed
-];
+
 
 const STARTING_SCENARIO_ID = 5;
 
@@ -62,6 +51,14 @@ export default function GameInterface() {
 	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
 	// 	[]
 	// );
+	const [scenarios, setScenario] = useState(
+
+		[
+			0, 1, 2, 3, 4, 5, 6
+		]
+	)
+
+
 
 	const supabase = createClient();
 
@@ -194,6 +191,7 @@ export default function GameInterface() {
 
 			setCurrentScenario(selectedScenario);
 
+
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
 			// 	{
@@ -235,11 +233,8 @@ export default function GameInterface() {
 			// );
 
 			// mainControls.set({ x: 0, y: 0, opacity: 1 });
+			setScenario([...scenarios, scenarios.length]);
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
-			setTimeout(() => {
-
-				console.log("fhfh")
-			}, 100);
 			x.set(0);
 			y.set(0);
 
@@ -259,6 +254,13 @@ export default function GameInterface() {
 		}
 	};
 
+
+	useEffect(() => {
+		console.log(currentScenarioIndex)
+	}, [currentScenarioIndex]);
+	useEffect(() => {
+		console.log(scenarios)
+	}, [scenarios]);
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
 	// }, [currentScenario]);
@@ -297,32 +299,33 @@ export default function GameInterface() {
 
 					<AnimatePresence>
 
-						{scenarios.map(
-							(scenario, index) =>
+						{scenarios[1] && scenarios.map(
+							(i) =>
 							(
 
 								<motion.div
 
-									key={`${scenario.id}`}
+									key={`${i}`}
 									animate={
 										{
-											scale: 0.95 ** (index - (currentScenarioIndex + (isAnimating && 1))),
-											y: (index - (currentScenarioIndex + (isAnimating && 1))) * 20,
+											scale: 0.95 ** (i - (currentScenarioIndex + (isAnimating && 1))),
+											y: (i - (currentScenarioIndex + (isAnimating && 1))) * 20,
 										}
 									}
-									initial={{ scale: 0.8, y: (index - currentScenarioIndex) * 20 }}
-									style={{ zIndex: scenarios.length - index, visibility: index >= currentScenarioIndex ? "visible" : "hidden" }}
+									initial={{ scale: 0.8, y: (i - currentScenarioIndex) * 20 }}
+
+									style={{ zIndex: scenarios.length - i, visibility: i >= currentScenarioIndex ? "visible" : "hidden" }}
 
 									whileTap={{ cursor: "grabbing" }}
 									className="absolute inset-0 touch-none"
-									transition={{ type: "spring", stiffness: 300, damping: 20 }}
+									transition={{ type: "spring", stiffness: 300, damping: 20, delay: (i - (currentScenarioIndex + (isAnimating && 1))) * 0.1 }}
 								>
 									<motion.div
 										className="absolute inset-0 bg-black rounded-2xl shadow-xl"
-										id={index + ""}
-										style={index === currentScenarioIndex ? { rotate, x, y } : {}}
-										drag={index === currentScenarioIndex && !isAnimating}
-										animate={index === currentScenarioIndex && mainControls}
+										id={i + ""}
+										style={i === currentScenarioIndex ? { rotate, x, y } : {}}
+										drag={i === currentScenarioIndex && !isAnimating}
+										animate={i === currentScenarioIndex && mainControls}
 										dragConstraints={{
 											top: -100,
 											bottom: 100,
@@ -330,13 +333,13 @@ export default function GameInterface() {
 											right: 100,
 										}}
 										onDragEnd={
-											index === currentScenarioIndex ? handleDragEnd : undefined
+											i === currentScenarioIndex ? handleDragEnd : undefined
 										}
 									>
-										<motion.div className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl" animate={{ opacity: 1 - (index - (currentScenarioIndex + (isAnimating && 1))) * 0.4 }}>
+										<motion.div className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl" animate={{ opacity: 1 - (i - (currentScenarioIndex + (isAnimating && 1))) * 0.2 }} initial={{ opacity: 1 - (i - (currentScenarioIndex + (isAnimating && 1))) * 0.4 }}>
 											<div className="flex-1 flex flex-col text-center items-center justify-around">
 												<motion.p className="font-mono">
-													{index === currentScenarioIndex
+													{i === currentScenarioIndex
 														? currentScenario.situation
 														: nextCardContent}
 												</motion.p>
