@@ -58,9 +58,9 @@ export default function GameInterface() {
 		military: 50,
 		economy: 50,
 	});
-	const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
-		[]
-	);
+	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
+	// 	[]
+	// );
 
 	const supabase = createClient();
 
@@ -250,10 +250,13 @@ export default function GameInterface() {
 
 				{/* Swipeable Cards */}
 				<div className="relative w-full aspect-[6/7]">
+
 					<AnimatePresence>
+
 						{scenarios.map(
 							(scenario, index) =>
 								index >= currentScenarioIndex && (
+
 									<motion.div
 										key={`${scenario.id}-${index}`}
 										drag={index === currentScenarioIndex && !isAnimating}
@@ -284,7 +287,7 @@ export default function GameInterface() {
 										transition={{ type: "spring", stiffness: 300, damping: 20 }}
 									>
 										<motion.div
-											className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl"
+											className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl hello "
 											style={index === currentScenarioIndex ? { rotate } : {}}
 										>
 											<div className="p-6 h-full flex flex-col">
