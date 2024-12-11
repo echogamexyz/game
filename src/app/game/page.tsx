@@ -121,7 +121,8 @@ export default function GameInterface() {
 		console.log(choiseScenarios);
 	}, [choiseScenarios]);
 
-	const controls = useAnimation();
+	const mainControls = useAnimation();
+	const SecondControls = useAnimation();
 
 	// Card motion values
 	const x = useMotionValue(0);
@@ -152,17 +153,17 @@ export default function GameInterface() {
 			const throwX = Math.cos(angle) * window.innerWidth * 1.5;
 			const throwY = Math.sin(angle) * window.innerHeight * 1.5;
 
-			await controls.start({
+			await mainControls.start({
 				x: throwX,
 				y: throwY,
 				opacity: 0,
 				transition: { duration: 0.5 },
 			});
 
-			const isSwipingLeft = info.offset.x < 0;
-			const selectedScenario = isSwipingLeft
-				? choiseScenarios.current.optionA
-				: choiseScenarios.current.optionB;
+			// const isSwipingLeft = info.offset.x < 0;
+			// const selectedScenario = isSwipingLeft
+			// 	? choiseScenarios.current.optionA
+			// 	: choiseScenarios.current.optionB;
 
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
@@ -177,11 +178,11 @@ export default function GameInterface() {
 			// 		content: selectedScenario.situation,
 			// 	},
 			// ];
-			setCurrentScenario(selectedScenario);
+			// setCurrentScenario(selectedScenario);
 
-			console.log("current", selectedScenario);
+			// console.log("current", selectedScenario);
 
-			setDayCount((prev) => prev + 1);
+			// setDayCount((prev) => prev + 1);
 
 			// ["optionA", "optionB"].map((key) => {
 			// 	// fetchNextScenario([
@@ -200,24 +201,38 @@ export default function GameInterface() {
 			// });
 
 			// Move to next scenario
-			setCurrentScenarioIndex(
-				(prevIndex) => (prevIndex + 1) % scenarios.length
-			);
+			// setCurrentScenarioIndex(
+			// 	(prevIndex) => (prevIndex + 1) % scenarios.length
+			// );
 
-			// Reset card position for next scenario
+			// mainControls.set({ x: 0, y: 0, opacity: 1 });
+			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
+			setTimeout(() => {
+
+				console.log("fhfh")
+			}, 100);
 			x.set(0);
 			y.set(0);
-			controls.set({ x: 0, y: 0, opacity: 1 });
+
+
+
+
+
+			// Reset card position for next scenario
 			setIsAnimating(false);
 		} else {
 			// Snap back to center
-			controls.start({
+			mainControls.start({
 				x: 0,
 				y: 0,
 				transition: { type: "spring", stiffness: 300, damping: 20 },
 			});
 		}
 	};
+
+	// useEffect(() => {
+	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
+	// }, [currentScenario]);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -255,49 +270,48 @@ export default function GameInterface() {
 
 						{scenarios.map(
 							(scenario, index) =>
-								index >= currentScenarioIndex && (
+							(
 
+								<motion.div
+
+									key={`${scenario.id}`}
+									animate={
+										{
+											scale: index === (currentScenarioIndex + (isAnimating && 1)) ? 1 : 0.8,
+											y: (index - currentScenarioIndex) * 20,
+										}
+									}
+									initial={{ scale: 0.8, y: (index - currentScenarioIndex) * 20 }}
+									style={{ zIndex: scenarios.length - index, visibility: index >= currentScenarioIndex ? "visible" : "hidden" }}
+
+									whileTap={{ cursor: "grabbing" }}
+									className="absolute inset-0 touch-none"
+									transition={{ type: "spring", stiffness: 300, damping: 20 }}
+								>
 									<motion.div
-										key={`${scenario.id}-${index}`}
+										className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl"
+										id={index + ""}
+										style={index === currentScenarioIndex ? { rotate, x, y } : {}}
 										drag={index === currentScenarioIndex && !isAnimating}
+										animate={index === currentScenarioIndex && mainControls}
 										dragConstraints={{
 											top: -100,
 											bottom: 100,
 											left: -100,
 											right: 100,
 										}}
-										style={
-											index === currentScenarioIndex
-												? { x, y, zIndex: scenarios.length - index }
-												: { zIndex: scenarios.length - index }
-										}
-										animate={
-											index === currentScenarioIndex
-												? controls
-												: {
-													scale: 0.95,
-													y: (index - currentScenarioIndex) * 20,
-												}
-										}
 										onDragEnd={
 											index === currentScenarioIndex ? handleDragEnd : undefined
 										}
-										whileTap={{ cursor: "grabbing" }}
-										className="absolute inset-0 touch-none"
-										transition={{ type: "spring", stiffness: 300, damping: 20 }}
 									>
-										<motion.div
-											className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl hello "
-											style={index === currentScenarioIndex ? { rotate } : {}}
-										>
-											<div className="p-6 h-full flex flex-col">
-												<div className="flex-1 flex items-center justify-center">
-													<div className="w-32 h-32 bg-neutral-800 rounded-full" />
-												</div>
+										<div className="p-6 h-full flex flex-col">
+											<div className="flex-1 flex items-center justify-center">
+												<div className="w-32 h-32 bg-neutral-800 rounded-full" />
 											</div>
-										</motion.div>
+										</div>
 									</motion.div>
-								)
+								</motion.div>
+							)
 						)}
 					</AnimatePresence>
 				</div>
