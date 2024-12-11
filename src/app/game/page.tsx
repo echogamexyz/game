@@ -7,6 +7,7 @@ import {
 	useTransform,
 	useAnimation,
 	AnimatePresence,
+	useMotionValueEvent,
 } from "framer-motion";
 import { Leaf, User2, Shield, DollarSign } from "lucide-react";
 import { Progress } from "../../components/ui/progress";
@@ -95,9 +96,11 @@ export default function GameInterface() {
 							body: { scenarioId: generatedScenario[key].id },
 						})
 						.then((s) => {
+							console.log("hello")
+							console.log(s.data.data);
 							choiseScenarios.current = {
 								...choiseScenarios.current,
-								[key]: s.data,
+								[key]: s.data.data,
 							};
 						});
 				});
@@ -131,6 +134,30 @@ export default function GameInterface() {
 		[x, y],
 		([latestX, latestY]) => Number(latestX) * 0.05 + Number(latestY) * 0.05
 	);
+
+	const [nextCardContent, setNextCardContent] = useState<string>(
+		""
+	);
+
+	useMotionValueEvent(x, "change", (latestX) => {
+		// console.log(latestX);
+
+		if (latestX < 0) {
+			setNextCardContent(choiseScenarios.current.optionA?.situation || "");
+			console.log(choiseScenarios.current.optionA?.situation);
+		} else {
+			setNextCardContent(choiseScenarios.current.optionB?.situation || "");
+			console.log(choiseScenarios.current.optionB?.situation);
+		}
+	});
+
+	useEffect(() => {
+		console.log(nextCardContent);
+	}, [nextCardContent]);
+
+
+
+
 	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
 	const handleDragEnd = async (
@@ -160,10 +187,12 @@ export default function GameInterface() {
 				transition: { duration: 0.5 },
 			});
 
-			// const isSwipingLeft = info.offset.x < 0;
-			// const selectedScenario = isSwipingLeft
-			// 	? choiseScenarios.current.optionA
-			// 	: choiseScenarios.current.optionB;
+			const isSwipingLeft = info.offset.x < 0;
+			const selectedScenario = isSwipingLeft
+				? choiseScenarios.current.optionA
+				: choiseScenarios.current.optionB;
+
+			setCurrentScenario(selectedScenario);
 
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
@@ -277,8 +306,8 @@ export default function GameInterface() {
 									key={`${scenario.id}`}
 									animate={
 										{
-											scale: index === (currentScenarioIndex + (isAnimating && 1)) ? 1 : 0.8,
-											y: (index - currentScenarioIndex) * 20,
+											scale: 0.95 ** (index - (currentScenarioIndex + (isAnimating && 1))),
+											y: (index - (currentScenarioIndex + (isAnimating && 1))) * 20,
 										}
 									}
 									initial={{ scale: 0.8, y: (index - currentScenarioIndex) * 20 }}
@@ -289,7 +318,7 @@ export default function GameInterface() {
 									transition={{ type: "spring", stiffness: 300, damping: 20 }}
 								>
 									<motion.div
-										className="absolute inset-0 bg-neutral-900 rounded-2xl shadow-xl"
+										className="absolute inset-0 bg-black rounded-2xl shadow-xl"
 										id={index + ""}
 										style={index === currentScenarioIndex ? { rotate, x, y } : {}}
 										drag={index === currentScenarioIndex && !isAnimating}
@@ -304,11 +333,16 @@ export default function GameInterface() {
 											index === currentScenarioIndex ? handleDragEnd : undefined
 										}
 									>
-										<div className="p-6 h-full flex flex-col">
-											<div className="flex-1 flex items-center justify-center">
+										<motion.div className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl" animate={{ opacity: 1 - (index - (currentScenarioIndex + (isAnimating && 1))) * 0.4 }}>
+											<div className="flex-1 flex flex-col text-center items-center justify-around">
+												<motion.p className="font-mono">
+													{index === currentScenarioIndex
+														? currentScenario.situation
+														: nextCardContent}
+												</motion.p>
 												<div className="w-32 h-32 bg-neutral-800 rounded-full" />
 											</div>
-										</div>
+										</motion.div>
 									</motion.div>
 								</motion.div>
 							)
