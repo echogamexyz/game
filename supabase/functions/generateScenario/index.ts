@@ -5,6 +5,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { generateObject } from "npm:ai";
 import { z } from "npm:zod";
 import { createAnthropic } from "npm:@ai-sdk/anthropic";
+import { corsHeaders } from "../_shared/cors.ts";
 
 const SYSTEMPROMPT =
   "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Generate the NEXT scenario based on the previous scenario";
@@ -15,9 +16,12 @@ const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY") ??
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: { ...corsHeaders }, status: 200 });
+  }
   console.log(Deno.env.get("URL"));
-  // const { scenarioId } = await req.json();
-  const scenarioId = 17;
+  const { scenarioId } = await req.json();
+  // const scenarioId = 17;
   try {
     const supabase = createClient<Database>(
       SUPABASE_URL,
@@ -42,12 +46,15 @@ Deno.serve(async (req) => {
         previousMessages,
       }),
       {
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
         status: 200,
       },
     );
   } catch (err) {
-    return new Response(String(err?.message ?? err), { status: 500 });
+    return new Response(String(err?.message ?? err), {
+      headers: { ...corsHeaders },
+      status: 500,
+    });
   }
 });
 

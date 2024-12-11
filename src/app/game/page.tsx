@@ -20,9 +20,18 @@ const THROW_VELOCITY = 750;
 
 type ClientScenario = {
 	situation: string;
-	optionA: { text: string; id: string };
-	optionB: { text: string; id: string };
+	optionA: { text: string; id: number };
+	optionB: { text: string; id: number };
 };
+
+const clientScenario = (
+	situation: string,
+	optionRows: { leading_choice: string | null; id: number }[]
+) => ({
+	situation,
+	optionA: { text: optionRows[0].leading_choice, id: optionRows[0].id },
+	optionB: { text: optionRows[1].leading_choice, id: optionRows[1].id },
+});
 
 const STARTING_SCENARIO_ID = 5;
 
@@ -42,7 +51,7 @@ export default function GameInterface() {
 
 	const supabase = createClient();
 
-	supabase.auth.signInAnonymously();
+	// supabase.auth.signInAnonymously();
 
 	const [currentScenario, setCurrentScenario] = useState<ClientScenario | null>(
 		null
@@ -59,23 +68,22 @@ export default function GameInterface() {
 	useEffect(() => {
 		const initializeScenario = async () => {
 			try {
-				
-				const { data, error } =
-					await supabase.functions.invoke<ClientScenario>("generateScenario", {
+				const { data } = await supabase.functions.invoke(
+					"generateScenario",
+					{
 						body: { scenarioId: STARTING_SCENARIO_ID },
-					});
+					}
+				);
 
-				if (error) {
-					throw error;
-				}
-				console.log(data);
-				setCurrentScenario(data);
+				const generatedScenario: ClientScenario = data.data;
+				console.log(generatedScenario);
+				setCurrentScenario(generatedScenario);
 
-				// Prefetch the next two scenarios
-				["optionA", "optionB"].map(async (key) => {
+				// // Prefetch the next two scenarios
+				["optionA", "optionB"].map((key) => {
 					supabase.functions
 						.invoke("generateScenario", {
-							body: { scenarioId: data[key].id },
+							body: { scenarioId: generatedScenario[key].id },
 						})
 						.then((s) => {
 							choiseScenarios.current = {
@@ -84,6 +92,8 @@ export default function GameInterface() {
 							};
 						});
 				});
+
+				// );
 			} catch (error) {
 				console.error("Failed to load scenario:", error);
 			} finally {
@@ -249,9 +259,9 @@ export default function GameInterface() {
 											index === currentScenarioIndex
 												? controls
 												: {
-														scale: 0.95,
-														y: (index - currentScenarioIndex) * 20,
-												  }
+													scale: 0.95,
+													y: (index - currentScenarioIndex) * 20,
+												}
 										}
 										onDragEnd={
 											index === currentScenarioIndex ? handleDragEnd : undefined
@@ -304,8 +314,8 @@ function StatusIcon({
 					value > 70
 						? "bg-green-900"
 						: value > 30
-						? "bg-neutral-800"
-						: "bg-red-900"
+							? "bg-neutral-800"
+							: "bg-red-900"
 				)}
 			>
 				<Icon className="w-6 h-6" />
