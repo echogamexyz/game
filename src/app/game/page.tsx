@@ -76,10 +76,6 @@ export default function GameInterface() {
 				);
 
 				const generatedScenario: ClientScenario = data.data;
-				console.log(generatedScenario);
-				setCurrentScenario(generatedScenario);
-
-				// // Prefetch the next two scenarios
 				["optionA", "optionB"].map((key) => {
 					supabase.functions
 						.invoke("generateScenario", {
@@ -92,6 +88,10 @@ export default function GameInterface() {
 							};
 						});
 				});
+				console.log(generatedScenario);
+				setCurrentScenario(generatedScenario);
+
+				// // Prefetch the next two scenarios
 
 				// );
 			} catch (error) {
