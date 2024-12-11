@@ -137,26 +137,26 @@ async function getScenario(
   supabase: SupabaseClient<Database>,
   scenarioId: number,
 ) {
-  const { data, error } = await supabase.from("cards").select("*").eq(
+  const mainCardRequest = supabase.from("cards").select("*").eq(
     "id",
     scenarioId,
-  );
+  ).throwOnError().then();
 
-  if (error) {
-    throw error;
-  }
+  const choiceCardsRequest = supabase.from("cards").select(
+    "leading_choice, id",
+  )
+    .eq("parent", scenarioId).throwOnError().then();
 
-  if (data == null || data.length == 0) {
+  const { data: mainCards } = await mainCardRequest;
+
+  if (mainCards == null || mainCards.length == 0) {
     throw new Error("Could not find that scenario");
   }
 
-  const scenario = data[0];
-  if (scenario.content != null) {
-    const { data: optionRows } = await supabase.from("cards").select(
-      "leading_choice, id",
-    )
-      .eq("parent", scenarioId);
+  const scenario = mainCards[0];
 
+  if (scenario.content != null) {
+    const { data: optionRows } = await choiceCardsRequest;
     if (!optionRows) {
       throw new Error("No options found for the scenario");
     }
