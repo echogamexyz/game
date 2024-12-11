@@ -33,6 +33,19 @@ const clientScenario = (
 	optionB: { text: optionRows[1].leading_choice, id: optionRows[1].id },
 });
 
+const scenarios = [
+	{
+		id: 1,
+	},
+	{
+		id: 2,
+	},
+	{
+		id: 3,
+	},
+	// Add more scenarios as needed
+];
+
 const STARTING_SCENARIO_ID = 5;
 
 export default function GameInterface() {
