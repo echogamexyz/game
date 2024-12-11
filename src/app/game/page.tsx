@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -8,6 +8,7 @@ import {
 	useAnimation,
 	AnimatePresence,
 	useMotionValueEvent,
+	useSpring,
 } from "framer-motion";
 import { Leaf, User2, Shield, DollarSign } from "lucide-react";
 import { Progress } from "../../components/ui/progress";
@@ -34,8 +35,6 @@ const clientScenario = (
 	optionB: { text: optionRows[1].leading_choice, id: optionRows[1].id },
 });
 
-
-
 const STARTING_SCENARIO_ID = 5;
 
 export default function GameInterface() {
@@ -51,14 +50,7 @@ export default function GameInterface() {
 	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
 	// 	[]
 	// );
-	const [scenarios, setScenario] = useState(
-
-		[
-			0, 1, 2, 3, 4, 5, 6
-		]
-	)
-
-
+	const [scenarios, setScenario] = useState([0, 1, 2, 3, 4, 5, 6]);
 
 	const supabase = createClient();
 
@@ -79,12 +71,9 @@ export default function GameInterface() {
 	useEffect(() => {
 		const initializeScenario = async () => {
 			try {
-				const { data } = await supabase.functions.invoke(
-					"generateScenario",
-					{
-						body: { scenarioId: STARTING_SCENARIO_ID },
-					}
-				);
+				const { data } = await supabase.functions.invoke("generateScenario", {
+					body: { scenarioId: STARTING_SCENARIO_ID },
+				});
 
 				const generatedScenario: ClientScenario = data.data;
 				["optionA", "optionB"].map((key) => {
@@ -93,7 +82,7 @@ export default function GameInterface() {
 							body: { scenarioId: generatedScenario[key].id },
 						})
 						.then((s) => {
-							console.log("hello")
+							console.log("hello");
 							console.log(s.data.data);
 							choiseScenarios.current = {
 								...choiseScenarios.current,
@@ -132,9 +121,10 @@ export default function GameInterface() {
 		([latestX, latestY]) => Number(latestX) * 0.05 + Number(latestY) * 0.05
 	);
 
-	const [nextCardContent, setNextCardContent] = useState<string>(
-		""
-	);
+	const leftOpacity = useTransform(x, [200, 30, -30, -200], [0, 0.7, 0.7, 1]);
+	const rightOpacity = useTransform(x, [-200, -30, 30, 200], [0, 0.7, 0.7, 1]);
+
+	const [nextCardContent, setNextCardContent] = useState<string>("");
 
 	useMotionValueEvent(x, "change", (latestX) => {
 		// console.log(latestX);
@@ -151,9 +141,6 @@ export default function GameInterface() {
 	useEffect(() => {
 		console.log(nextCardContent);
 	}, [nextCardContent]);
-
-
-
 
 	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
@@ -190,7 +177,6 @@ export default function GameInterface() {
 				: choiseScenarios.current.optionB;
 
 			setCurrentScenario(selectedScenario);
-
 
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
@@ -238,10 +224,6 @@ export default function GameInterface() {
 			x.set(0);
 			y.set(0);
 
-
-
-
-
 			// Reset card position for next scenario
 			setIsAnimating(false);
 		} else {
@@ -254,13 +236,18 @@ export default function GameInterface() {
 		}
 	};
 
-
 	useEffect(() => {
-		console.log(currentScenarioIndex)
+		console.log(currentScenarioIndex);
 	}, [currentScenarioIndex]);
 	useEffect(() => {
-		console.log(scenarios)
+		console.log(scenarios);
+		while (scenarios.length > randomRotations.current.length) {
+			randomRotations.current.push(Math.random() * 10 - 5);
+		}
 	}, [scenarios]);
+
+	const randomRotations = useRef([]);
+
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
 	// }, [currentScenario]);
@@ -290,35 +277,28 @@ export default function GameInterface() {
 
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
-				<p className="text-center mb-8 font-mono">
-					{currentScenario.situation}
-				</p>
-
 				{/* Swipeable Cards */}
 				<div className="relative w-full aspect-[6/7]">
-
 					<AnimatePresence>
-
-						{scenarios[1] && scenarios.map(
-							(i) =>
-							(
-
+						{scenarios[1] &&
+							scenarios.map((i) => (
 								<motion.div
-
 									key={`${i}`}
-									animate={
-										{
-											scale: 0.95 ** (i - (currentScenarioIndex + (isAnimating && 1))),
-											y: (i - (currentScenarioIndex + (isAnimating && 1))) * 20,
-										}
-									}
+									animate={{
+										scale:
+											0.95 ** (i - (currentScenarioIndex + (isAnimating && 1))),
+										y: (i - (currentScenarioIndex + (isAnimating && 1))) * 30,
+									}}
 									initial={{ scale: 0.8, y: (i - currentScenarioIndex) * 20 }}
-
-									style={{ zIndex: scenarios.length - i, visibility: i >= currentScenarioIndex ? "visible" : "hidden" }}
-
+									style={{
+										zIndex: scenarios.length - i,
+										visibility:
+											i >= currentScenarioIndex ? "visible" : "hidden",
+										rotate: randomRotations.current[i],
+									}}
 									whileTap={{ cursor: "grabbing" }}
 									className="absolute inset-0 touch-none"
-									transition={{ type: "spring", stiffness: 300, damping: 20, delay: (i - (currentScenarioIndex + (isAnimating && 1))) * 0.1 }}
+									transition={{ duration: 0.5, ease: "easeInOut" }}
 								>
 									<motion.div
 										className="absolute inset-0 bg-black rounded-2xl shadow-xl"
@@ -336,7 +316,21 @@ export default function GameInterface() {
 											i === currentScenarioIndex ? handleDragEnd : undefined
 										}
 									>
-										<motion.div className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl" animate={{ opacity: 1 - (i - (currentScenarioIndex + (isAnimating && 1))) * 0.2 }} initial={{ opacity: 1 - (i - (currentScenarioIndex + (isAnimating && 1))) * 0.4 }}>
+										<motion.div
+											className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl"
+											animate={{
+												opacity:
+													1 -
+													(i - (currentScenarioIndex + (isAnimating && 1))) *
+														0.2,
+											}}
+											initial={{
+												opacity:
+													1 -
+													(i - (currentScenarioIndex + (isAnimating && 1))) *
+														0.4,
+											}}
+										>
 											<div className="flex-1 flex flex-col text-center items-center justify-around">
 												<motion.p className="font-mono">
 													{i === currentScenarioIndex
@@ -348,13 +342,16 @@ export default function GameInterface() {
 										</motion.div>
 									</motion.div>
 								</motion.div>
-							)
-						)}
+							))}
 					</AnimatePresence>
 				</div>
-				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl">
-					<h1>{currentScenario.optionA.text}</h1>
-					<h1>{currentScenario.optionB.text}</h1>
+				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl z-10">
+					<motion.h1 style={{ opacity: leftOpacity }}>
+						{currentScenario.optionA.text}
+					</motion.h1>
+					<motion.h1 style={{ opacity: rightOpacity }} className="text-right">
+						{currentScenario.optionB.text}
+					</motion.h1>
 				</div>
 				{/* Year and Days Counter */}
 				<div className="mt-8 text-center font-mono">
@@ -381,8 +378,8 @@ function StatusIcon({
 					value > 70
 						? "bg-green-900"
 						: value > 30
-							? "bg-neutral-800"
-							: "bg-red-900"
+						? "bg-neutral-800"
+						: "bg-red-900"
 				)}
 			>
 				<Icon className="w-6 h-6" />
