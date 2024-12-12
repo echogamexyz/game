@@ -168,7 +168,7 @@ export default function GameInterface() {
 				x: throwX,
 				y: throwY,
 				opacity: 0,
-				transition: { duration: 0.5 },
+				transition: { duration: 1 },
 			});
 
 			const isSwipingLeft = info.offset.x < 0;
@@ -332,7 +332,7 @@ export default function GameInterface() {
 											}}
 										>
 											<div className="flex-1 flex flex-col text-center items-center justify-around">
-												<motion.p className="font-mono">
+												<motion.p className="font-mono text-sm">
 													{i === currentScenarioIndex
 														? currentScenario.situation
 														: nextCardContent}
