@@ -345,11 +345,11 @@ export default function GameInterface() {
 											}}
 										>
 											<div className="flex-1 flex flex-col text-center items-center justify-around">
-												<motion.p className="font-mono text-sm md:text-base">
+												<p className="font-mono text-sm md:text-base">
 													{i === currentScenarioIndex
 														? currentScenario.situation
 														: nextCardContent}
-												</motion.p>
+												</p>
 												<div className="w-32 h-32 bg-neutral-700 rounded-full" />
 											</div>
 										</motion.div>
