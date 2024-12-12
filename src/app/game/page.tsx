@@ -50,7 +50,7 @@ export default function GameInterface() {
 	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
 	// 	[]
 	// );
-	const [scenarios, setScenario] = useState([0, 1, 2, 3, 4, 5, 6]);
+	const [scenarios, setScenario] = useState([0, 1, 2]);
 
 	const supabase = createClient();
 
