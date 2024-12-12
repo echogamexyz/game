@@ -307,6 +307,7 @@ export default function GameInterface() {
 										visibility:
 											i >= currentScenarioIndex ? "visible" : "hidden",
 										rotate: randomRotations.current[i],
+										willChange: 'transform, opacity', // Hint the browser
 									}}
 									whileTap={{ cursor: "grabbing" }}
 									className="absolute inset-0 touch-none"
