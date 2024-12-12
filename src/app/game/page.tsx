@@ -268,7 +268,7 @@ export default function GameInterface() {
 	}
 
 	return (
-		<div className="min-h-screen bg-black text-white flex flex-col">
+		<div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
 			{/* Status Bar */}
 			<div className="p-4 flex justify-between items-center max-w-md mx-auto w-full">
 				<StatusIcon icon={Leaf} value={stats.nature} />
@@ -307,7 +307,7 @@ export default function GameInterface() {
 										visibility:
 											i >= currentScenarioIndex ? "visible" : "hidden",
 										rotate: randomRotations.current[i],
-										willChange: 'transform, opacity', // Hint the browser
+										willChange: "transform, opacity", // Hint the browser
 									}}
 									whileTap={{ cursor: "grabbing" }}
 									className="absolute inset-0 touch-none"
