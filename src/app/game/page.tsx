@@ -220,6 +220,9 @@ export default function GameInterface() {
 
 			// mainControls.set({ x: 0, y: 0, opacity: 1 });
 			setScenario([...scenarios, scenarios.length]);
+			while (scenarios.length + 1 > randomRotations.current.length) {
+				randomRotations.current.push(Math.random() * 10 - 5);
+			}
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
 			x.set(0);
 			y.set(0);
@@ -239,14 +242,12 @@ export default function GameInterface() {
 	useEffect(() => {
 		console.log(currentScenarioIndex);
 	}, [currentScenarioIndex]);
-	useEffect(() => {
-		console.log(scenarios);
-		while (scenarios.length > randomRotations.current.length) {
-			randomRotations.current.push(Math.random() * 10 - 5);
-		}
-	}, [scenarios]);
 
-	const randomRotations = useRef([]);
+	const randomRotations = useRef([
+		Math.random() * 10 - 5,
+		Math.random() * 10 - 5,
+		Math.random() * 10 - 5,
+	]);
 
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
@@ -289,7 +290,10 @@ export default function GameInterface() {
 											0.95 ** (i - (currentScenarioIndex + (isAnimating && 1))),
 										y: (i - (currentScenarioIndex + (isAnimating && 1))) * 30,
 									}}
-									initial={{ scale: 0.8, y: (i - currentScenarioIndex) * 20 }}
+									initial={{
+										scale: 0.8,
+										y: (i - (currentScenarioIndex + (isAnimating && 1))) * 30,
+									}}
 									style={{
 										zIndex: scenarios.length - i,
 										visibility:
@@ -317,7 +321,7 @@ export default function GameInterface() {
 										}
 									>
 										<motion.div
-											className="p-6 h-full flex flex-col bg-neutral-900 rounded-2xl"
+											className="p-6 h-full flex flex-col bg-neutral-800 rounded-2xl"
 											animate={{
 												opacity:
 													1 -
