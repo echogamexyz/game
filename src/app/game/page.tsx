@@ -164,6 +164,11 @@ export default function GameInterface() {
 			const throwX = Math.cos(angle) * window.innerWidth * 1.5;
 			const throwY = Math.sin(angle) * window.innerHeight * 1.5;
 
+			setScenario([...scenarios, scenarios.length]);
+			while (scenarios.length + 1 > randomRotations.current.length) {
+				randomRotations.current.push(Math.random() * 10 - 5);
+			}
+
 			await mainControls.start({
 				x: throwX,
 				y: throwY,
@@ -219,10 +224,7 @@ export default function GameInterface() {
 			// );
 
 			// mainControls.set({ x: 0, y: 0, opacity: 1 });
-			setScenario([...scenarios, scenarios.length]);
-			while (scenarios.length + 1 > randomRotations.current.length) {
-				randomRotations.current.push(Math.random() * 10 - 5);
-			}
+
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
 			x.set(0);
 			y.set(0);
@@ -289,10 +291,13 @@ export default function GameInterface() {
 										scale:
 											0.95 ** (i - (currentScenarioIndex + (isAnimating && 1))),
 										y: (i - (currentScenarioIndex + (isAnimating && 1))) * 30,
+										opacity: 1,
 									}}
 									initial={{
-										scale: 0.8,
-										y: (i - (currentScenarioIndex + (isAnimating && 1))) * 30,
+										y: (i - currentScenarioIndex) * 30,
+										opacity: 0,
+										scale:
+										0.95 ** (i -currentScenarioIndex),
 									}}
 									style={{
 										zIndex: scenarios.length - i,
