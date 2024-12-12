@@ -181,6 +181,10 @@ export default function GameInterface() {
 				? choiseScenarios.current.optionA
 				: choiseScenarios.current.optionB;
 
+			console.log(isSwipingLeft);
+
+			console.log("swiped");
+
 			setCurrentScenario(selectedScenario);
 
 			// previueMsgs.current = [
