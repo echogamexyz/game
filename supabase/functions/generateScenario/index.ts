@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
+import { createClient, SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 import { Database } from "../_shared/database.types.ts";
 import { CoreMessage, GenerateObjectResult } from "npm:ai";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
@@ -115,7 +115,7 @@ async function getPreviousScenarios(
   if (error) {
     throw error;
   }
-  const previousScenarios: CoreMessage[] = data.flatMap((d) => {
+  const previousScenarios: CoreMessage[] = data.flatMap((d: { content: { text: string } | null; leading_choice: string }) => {
     const content = d.content as { text: string } | null;
 
     const assistantMsg: CoreMessage | { role: string; content: undefined } = {
