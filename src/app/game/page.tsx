@@ -279,7 +279,7 @@ export default function GameInterface() {
 			</div> */}
 
 			{/* Main Content */}
-			<div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
+			<div className="flex-1 flex flex-col p-4 max-w-md mx-auto w-full">
 				{/* Swipeable Cards */}
 				<div className="relative w-full aspect-[6/7]">
 					<AnimatePresence>
@@ -296,8 +296,7 @@ export default function GameInterface() {
 									initial={{
 										y: (i - currentScenarioIndex) * 30,
 										opacity: 0,
-										scale:
-										0.95 ** (i -currentScenarioIndex),
+										scale: 0.95 ** (i - currentScenarioIndex),
 									}}
 									style={{
 										zIndex: scenarios.length - i,
@@ -346,7 +345,7 @@ export default function GameInterface() {
 														? currentScenario.situation
 														: nextCardContent}
 												</motion.p>
-												<div className="w-32 h-32 bg-neutral-800 rounded-full" />
+												<div className="w-32 h-32 bg-neutral-700 rounded-full" />
 											</div>
 										</motion.div>
 									</motion.div>
