@@ -309,11 +309,21 @@ export default function GameInterface() {
 									transition={{ duration: 0.5, ease: "easeInOut" }}
 								>
 									<motion.div
-										className="absolute inset-0 bg-black rounded-2xl shadow-xl"
+										className="absolute inset-0 bg-neutral-800 rounded-2xl shadow-xl p-6 h-full flex flex-col"
 										id={i + ""}
 										style={i === currentScenarioIndex ? { rotate, x, y } : {}}
 										drag={i === currentScenarioIndex && !isAnimating}
-										animate={i === currentScenarioIndex && mainControls}
+										animate={
+											i === currentScenarioIndex
+												? mainControls
+												: {
+														opacity:
+															1 -
+															(i -
+																(currentScenarioIndex + (isAnimating && 1))) *
+																0.2,
+												  }
+										}
 										dragConstraints={{
 											top: -100,
 											bottom: 100,
@@ -323,31 +333,20 @@ export default function GameInterface() {
 										onDragEnd={
 											i === currentScenarioIndex ? handleDragEnd : undefined
 										}
+										initial={{
+											opacity:
+												1 -
+												(i - (currentScenarioIndex + (isAnimating && 1))) * 0.4,
+										}}
 									>
-										<motion.div
-											className="p-6 h-full flex flex-col bg-neutral-800 rounded-2xl"
-											animate={{
-												opacity:
-													1 -
-													(i - (currentScenarioIndex + (isAnimating && 1))) *
-														0.2,
-											}}
-											initial={{
-												opacity:
-													1 -
-													(i - (currentScenarioIndex + (isAnimating && 1))) *
-														0.4,
-											}}
-										>
-											<div className="flex-1 flex flex-col text-center items-center justify-around">
-												<motion.p className="font-mono text-sm md:text-base">
-													{i === currentScenarioIndex
-														? currentScenario.situation
-														: nextCardContent}
-												</motion.p>
-												<div className="w-32 h-32 bg-neutral-700 rounded-full" />
-											</div>
-										</motion.div>
+										<div className="flex-1 flex flex-col text-center items-center justify-around">
+											<p className="font-mono text-sm md:text-base">
+												{i === currentScenarioIndex
+													? currentScenario.situation
+													: nextCardContent}
+											</p>
+											<div className="w-32 h-32 bg-neutral-700 rounded-full" />
+										</div>
 									</motion.div>
 								</motion.div>
 							))}
