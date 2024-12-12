@@ -271,9 +271,9 @@ export default function GameInterface() {
 			</div>
 
 			{/* Progress Bar */}
-			<div className="max-w-md mx-auto w-full px-8">
+			{/* <div className="max-w-md mx-auto w-full px-8">
 				<Progress value={33} className="h-2 bg-neutral-800" />
-			</div>
+			</div> */}
 
 			{/* Main Content */}
 			<div className="flex-1 flex flex-col items-center justify-center p-4 max-w-md mx-auto w-full">
@@ -332,7 +332,7 @@ export default function GameInterface() {
 											}}
 										>
 											<div className="flex-1 flex flex-col text-center items-center justify-around">
-												<motion.p className="font-mono text-sm">
+												<motion.p className="font-mono text-sm md:text-base">
 													{i === currentScenarioIndex
 														? currentScenario.situation
 														: nextCardContent}
@@ -345,7 +345,7 @@ export default function GameInterface() {
 							))}
 					</AnimatePresence>
 				</div>
-				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between text-xl z-10">
+				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between md:text-xl z-10">
 					<motion.h1 style={{ opacity: leftOpacity }}>
 						{currentScenario.optionA.text}
 					</motion.h1>
