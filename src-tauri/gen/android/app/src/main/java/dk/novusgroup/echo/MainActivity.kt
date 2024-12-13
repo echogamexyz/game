@@ -1,3 +1,3 @@
-package xyz.echogame.app
+package dk.novusgroup.echo
 
 class MainActivity : TauriActivity()
