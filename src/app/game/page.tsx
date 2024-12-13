@@ -234,19 +234,9 @@ export default function GameInterface() {
 		}
 	};
 
-	const getRandomRotation = () => (Math.random() - 0.5) * 5;
-
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
 	// }, [currentScenario]);
-
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
-
-	if (!currentScenario) {
-		return <div>Error loading scenario</div>;
-	}
 
 	return (
 		<div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
@@ -268,11 +258,14 @@ export default function GameInterface() {
 					}}
 				/>
 
+
 				<ChoiceOptions
 					currentScenario={currentScenario}
 					leftOpacity={leftOpacity}
 					rightOpacity={rightOpacity}
 				/>
+
+
 
 				<div className="mt-8 text-center font-mono">
 					<p className="text-2xl">2075</p>

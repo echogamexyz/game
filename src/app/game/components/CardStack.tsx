@@ -16,6 +16,11 @@ type CardStackProps = {
         handleDragEnd: (event: any, info: any) => void;
     };
 };
+import { Flow_Circular } from 'next/font/google'
+const flowFont = Flow_Circular({ weight: "400", subsets: ["latin"] });
+
+const TEMPLATE_TEXT = "After accepting international aid and loosening environmental regulations, your agricultural sector stabilizes but toxic chemicals from unregulated farming are now seeping into major water supplies. Health officials report rising cases of illness in rural communities."
+
 
 export function CardStack({
     scenarios,
@@ -26,6 +31,7 @@ export function CardStack({
     cardControls,
 }: CardStackProps) {
     const randomRotations = useRandomRotations(scenarios.length + 1);
+
 
 
     return (
@@ -80,8 +86,8 @@ export function CardStack({
                                             }}
                                         >
                                             <div className="flex-1 flex flex-col text-center items-center justify-around">
-                                                <p className="font-mono text-sm md:text-base">
-                                                    {i === currentScenarioIndex ? currentScenario.situation : nextCardContent}
+                                                <p className={`font-mono text-sm md:text-base ${currentScenario ? "" : flowFont.className}`}>
+                                                    {i === currentScenarioIndex ? (currentScenario?.situation ?? TEMPLATE_TEXT) : nextCardContent}
                                                 </p>
                                                 <div className="w-32 h-32 bg-neutral-700 rounded-full" />
                                             </div>
