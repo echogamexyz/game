@@ -2,17 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-	motion,
 	useMotionValue,
 	useTransform,
 	useAnimation,
-	AnimatePresence,
 	useMotionValueEvent,
 } from "framer-motion";
-import { Leaf, User2, Shield, DollarSign } from "lucide-react";
-// import { fetchNextScenario } from "../../lib/scenarioFetcher.ts.old";
-import { cn } from "../../lib/utils";
 import { createClient } from "../../lib/supabase/client";
+import { StatusBar } from "./components/StatusBar";
+import { CardStack } from "./components/CardStack";
+import { ChoiceOptions } from "./components/ChoiceOptions";
 
 const DRAG_THRESHOLD = 200;
 const THROW_VELOCITY = 750;
@@ -259,145 +257,35 @@ export default function GameInterface() {
 
 	return (
 		<div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
-			{/* Status Bar */}
-			<div className="p-4 flex justify-between items-center max-w-md mx-auto w-full">
-				<StatusIcon icon={Leaf} value={stats.nature} />
-				<StatusIcon icon={User2} value={stats.social} />
-				<StatusIcon icon={Shield} value={stats.military} />
-				<StatusIcon icon={DollarSign} value={stats.economy} />
-			</div>
+			<StatusBar stats={stats} />
 
-			{/* Progress Bar */}
-			{/* <div className="max-w-md mx-auto w-full px-8">
-				<Progress value={33} className="h-2 bg-neutral-800" />
-			</div> */}
-
-			{/* Main Content */}
 			<div className="flex-1 flex flex-col p-4 max-w-md mx-auto w-full">
-				{/* Swipeable Cards */}
-				<div className="relative w-full aspect-[6/7]">
-					<AnimatePresence>
-						{scenarios[1] &&
-							scenarios.map(
-								(i) =>
-									i >= currentScenarioIndex && (
-										<motion.div
-											key={`${i}`}
-											animate={{
-												scale:
-													0.95 **
-													(i - (currentScenarioIndex + (isAnimating && 1))),
-												y:
-													(i - (currentScenarioIndex + (isAnimating && 1))) *
-													30,
-												opacity: 1,
-												
-											}}
-											initial={{
-												y: (i - currentScenarioIndex) * 30,
-												opacity: 0,
-												scale: 0.95 ** (i - currentScenarioIndex),
-											}}
-											style={{
-												zIndex: scenarios.length - i,
-												rotate: randomRotations.current[i],
+				<CardStack
+					scenarios={scenarios}
+					currentScenarioIndex={currentScenarioIndex}
+					isAnimating={isAnimating}
+					currentScenario={currentScenario}
+					nextCardContent={nextCardContent}
+					cardControls={{
+						rotate,
+						x,
+						y,
+						mainControls,
+						handleDragEnd,
+					}}
+				/>
 
-												willChange: "transform, opacity", // Hint the browser
-											}}
-											whileTap={{ cursor: "grabbing" }}
-											className="absolute inset-0 touch-none"
-											transition={{ duration: 0.5, ease: "easeInOut" }}
-										>
-											<motion.div
-												className="absolute inset-0 bg-black rounded-2xl shadow-xl"
-												id={i + ""}
-												style={
-													i === currentScenarioIndex ? { rotate, x, y } : {}
-												}
-												drag={i === currentScenarioIndex && !isAnimating}
-												animate={i === currentScenarioIndex && mainControls}
-												dragConstraints={{
-													top: 0,
-													bottom: 0,
-													left: -100,
-													right: 100,
-												}}
-												onDragEnd={
-													i === currentScenarioIndex ? handleDragEnd : undefined
-												}
-											>
-												<motion.div
-													className="p-6 h-full flex flex-col bg-neutral-800 rounded-2xl"
-													animate={{
-														opacity:
-															1 -
-															(i -
-																(currentScenarioIndex + (isAnimating && 1))) *
-																0.2,
-													}}
-													initial={{
-														opacity:
-															1 -
-															(i -
-																(currentScenarioIndex + (isAnimating && 1))) *
-																0.4,
-													}}
-												>
-													<div className="flex-1 flex flex-col text-center items-center justify-around">
-														<p className="font-mono text-sm md:text-base">
-															{i === currentScenarioIndex
-																? currentScenario.situation
-																: nextCardContent}
-														</p>
-														<div className="w-32 h-32 bg-neutral-700 rounded-full" />
-													</div>
-												</motion.div>
-											</motion.div>
-										</motion.div>
-									)
-							)}
-					</AnimatePresence>
-				</div>
-				<div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between md:text-xl z-10">
-					<motion.h1 style={{ opacity: leftOpacity }}>
-						{currentScenario.optionA.text}
-					</motion.h1>
-					<motion.h1 style={{ opacity: rightOpacity }} className="text-right">
-						{currentScenario.optionB.text}
-					</motion.h1>
-				</div>
-				{/* Year and Days Counter */}
+				<ChoiceOptions
+					currentScenario={currentScenario}
+					leftOpacity={leftOpacity}
+					rightOpacity={rightOpacity}
+				/>
+
 				<div className="mt-8 text-center font-mono">
 					<p className="text-2xl">2075</p>
 					<p className="text-neutral-400">{dayCount} days in power</p>
 				</div>
 			</div>
-		</div>
-	);
-}
-
-function StatusIcon({
-	icon: Icon,
-	value,
-}: {
-	icon: React.ElementType;
-	value: number;
-}) {
-	return (
-		<div className="flex flex-col items-center gap-2">
-			<div
-				className={cn(
-					"w-12 h-12 rounded-full flex items-center justify-center",
-					value > 70
-						? "bg-green-900"
-						: value > 30
-						? "bg-neutral-800"
-						: "bg-red-900"
-				)}
-			>
-				<Icon className="w-6 h-6" />
-			</div>
-			<div className="w-2 h-2 rounded-full bg-white" />
 		</div>
 	);
 }
