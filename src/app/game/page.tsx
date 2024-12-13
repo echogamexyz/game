@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -8,13 +8,10 @@ import {
 	useAnimation,
 	AnimatePresence,
 	useMotionValueEvent,
-	useSpring,
 } from "framer-motion";
 import { Leaf, User2, Shield, DollarSign } from "lucide-react";
-import { Progress } from "../../components/ui/progress";
 // import { fetchNextScenario } from "../../lib/scenarioFetcher.ts.old";
 import { cn } from "../../lib/utils";
-import { Database } from "../../lib/supabase/database.types";
 import { createClient } from "../../lib/supabase/client";
 
 const DRAG_THRESHOLD = 200;
@@ -50,7 +47,7 @@ export default function GameInterface() {
 	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
 	// 	[]
 	// );
-	const [scenarios, setScenario] = useState([0, 1, 2]);
+	const [scenarios, setScenario] = useState([0, 1]);
 
 	const supabase = createClient();
 
@@ -77,12 +74,13 @@ export default function GameInterface() {
 
 				const generatedScenario: ClientScenario = data.data;
 				["optionA", "optionB"].map((key) => {
+					console.log(generatedScenario[key].id);
 					supabase.functions
 						.invoke("generateScenario", {
 							body: { scenarioId: generatedScenario[key].id },
 						})
 						.then((s) => {
-							console.log("hello");
+							console.log(key);
 							console.log(s.data.data);
 							choiseScenarios.current = {
 								...choiseScenarios.current,
