@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
+import { useRandomRotations } from '../hooks/useRandomRotations';
 
 type CardStackProps = {
     scenarios: number[];
@@ -24,20 +25,13 @@ export function CardStack({
     nextCardContent,
     cardControls,
 }: CardStackProps) {
-    const randomRotations = useRef([
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5,
-        (Math.random() - 0.5) * 5,
-    ]);
+    const randomRotations = useRandomRotations(scenarios.length + 1);
 
-    while (scenarios.length + 1 > randomRotations.current.length) {
-        randomRotations.current.push((Math.random() - 0.5) * 5);
-    }
 
     return (
         <div className="relative w-full aspect-[6/7]">
             <AnimatePresence>
-                {scenarios[1] &&
+                {
                     scenarios.map(
                         (i) =>
                             i >= currentScenarioIndex && (
@@ -55,7 +49,7 @@ export function CardStack({
                                     }}
                                     style={{
                                         zIndex: scenarios.length - i,
-                                        rotate: randomRotations.current[i],
+                                        rotate: randomRotations[i],
                                         willChange: "transform, opacity",
                                     }}
                                     whileTap={{ cursor: "grabbing" }}

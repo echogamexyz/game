@@ -161,9 +161,6 @@ export default function GameInterface() {
 			const throwY = Math.sin(angle) * window.innerHeight * 1.5;
 
 			setScenario([...scenarios, scenarios.length]);
-			while (scenarios.length + 1 > randomRotations.current.length) {
-				randomRotations.current.push((Math.random() - 0.5) * 5);
-			}
 
 			await mainControls.start({
 				x: throwX,
@@ -237,11 +234,7 @@ export default function GameInterface() {
 		}
 	};
 
-	const randomRotations = useRef([
-		(Math.random() - 0.5) * 5,
-		(Math.random() - 0.5) * 5,
-		(Math.random() - 0.5) * 5,
-	]);
+	const getRandomRotation = () => (Math.random() - 0.5) * 5;
 
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
