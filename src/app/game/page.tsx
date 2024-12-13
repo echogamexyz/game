@@ -47,7 +47,7 @@ export default function GameInterface() {
 	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
 	// 	[]
 	// );
-	const [scenarios, setScenario] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+	const [scenarios, setScenario] = useState([0, 1, 2, 3]);
 
 	const supabase = createClient();
 
@@ -318,8 +318,8 @@ export default function GameInterface() {
 										drag={i === currentScenarioIndex && !isAnimating}
 										animate={i === currentScenarioIndex && mainControls}
 										dragConstraints={{
-											top: -100,
-											bottom: 100,
+											top: 0,
+											bottom: 0,
 											left: -100,
 											right: 100,
 										}}
