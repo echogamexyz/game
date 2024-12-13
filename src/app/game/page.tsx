@@ -129,16 +129,10 @@ export default function GameInterface() {
 
 		if (latestX < 0) {
 			setNextCardContent(choiseScenarios.current.optionA?.situation || "");
-			console.log(choiseScenarios.current.optionA?.situation);
 		} else {
 			setNextCardContent(choiseScenarios.current.optionB?.situation || "");
-			console.log(choiseScenarios.current.optionB?.situation);
 		}
 	});
-
-	useEffect(() => {
-		console.log(nextCardContent);
-	}, [nextCardContent]);
 
 	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
@@ -149,16 +143,22 @@ export default function GameInterface() {
 			velocity: { x: number; y: number };
 		}
 	) => {
-		const offset = Math.sqrt(info.offset.x ** 2 + info.offset.y ** 2);
-		const velocity = Math.sqrt(info.velocity.x ** 2 + info.velocity.y ** 2);
+		console.log("offset: ", info.offset.x);
+		console.log("velocity: ", info.velocity.x);
+		const predictedX = info.offset.x + info.velocity.x;
+		const predictedY = (info.offset.y + info.velocity.y);
+
+		const offset = Math.sqrt(predictedX ** 2 + (predictedY / 10) ** 2);
+
+		console.log("offset: ", offset);
+		const velocity = Math.sqrt(
+			info.velocity.x ** 2 + (info.velocity.y / 2) ** 2
+		);
 		console.log("fetchNextScenario");
 
-		if (
-			(offset > DRAG_THRESHOLD || velocity > THROW_VELOCITY) &&
-			!isAnimating
-		) {
+		if (offset > 300 && velocity > 40 && !isAnimating) {
 			setIsAnimating(true);
-			const angle = Math.atan2(info.offset.y, info.offset.x);
+			const angle = Math.atan2(predictedY, predictedX);
 			const throwX = Math.cos(angle) * window.innerWidth * 1.5;
 			const throwY = Math.sin(angle) * window.innerHeight * 1.5;
 
@@ -174,14 +174,10 @@ export default function GameInterface() {
 				transition: { duration: 1 },
 			});
 
-			const isSwipingLeft = info.offset.x < 0;
+			const isSwipingLeft = predictedX < 0;
 			const selectedScenario = isSwipingLeft
 				? choiseScenarios.current.optionA
 				: choiseScenarios.current.optionB;
-
-			console.log(isSwipingLeft);
-
-			console.log("swiped");
 
 			setCurrentScenario(selectedScenario);
 
@@ -242,10 +238,6 @@ export default function GameInterface() {
 			});
 		}
 	};
-
-	useEffect(() => {
-		console.log(currentScenarioIndex);
-	}, [currentScenarioIndex]);
 
 	const randomRotations = useRef([
 		Math.random() * 10 - 5,
