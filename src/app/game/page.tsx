@@ -176,6 +176,22 @@ export default function GameInterface() {
 
 			setCurrentScenario(selectedScenario);
 
+			["optionA", "optionB"].map((key) => {
+				console.log(selectedScenario[key].id);
+				supabase.functions
+					.invoke("generateScenario", {
+						body: { scenarioId: selectedScenario[key].id },
+					})
+					.then((s) => {
+						console.log(key);
+						console.log(s.data.data);
+						choiseScenarios.current = {
+							...choiseScenarios.current,
+							[key]: s.data.data,
+						};
+					});
+			});
+
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
 			// 	{
