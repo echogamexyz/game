@@ -154,7 +154,12 @@ export default function GameInterface() {
 		);
 		console.log("fetchNextScenario");
 
-		if (offset > 300 && velocity > 40 && !isAnimating) {
+		const isSwipingLeft = predictedX < 0;
+		const selectedScenario = isSwipingLeft
+			? choiseScenarios.current.optionA
+			: choiseScenarios.current.optionB;
+
+		if (offset > 300 && velocity > 40 && !isAnimating && selectedScenario) {
 			setIsAnimating(true);
 			const angle = Math.atan2(predictedY, predictedX);
 			const throwX = Math.cos(angle) * window.innerWidth * 1.5;
@@ -169,12 +174,29 @@ export default function GameInterface() {
 				transition: { duration: 1 },
 			});
 
-			const isSwipingLeft = predictedX < 0;
-			const selectedScenario = isSwipingLeft
-				? choiseScenarios.current.optionA
-				: choiseScenarios.current.optionB;
+
 
 			setCurrentScenario(selectedScenario);
+
+			["optionA", "optionB"].map((key) => {
+				choiseScenarios.current = {
+					...choiseScenarios.current,
+					[key]: null,
+				};
+				console.log(selectedScenario[key].id);
+				supabase.functions
+					.invoke("generateScenario", {
+						body: { scenarioId: selectedScenario[key].id },
+					})
+					.then((s) => {
+						console.log(key);
+						console.log(s.data.data);
+						choiseScenarios.current = {
+							...choiseScenarios.current,
+							[key]: s.data.data,
+						};
+					});
+			});
 
 			// previueMsgs.current = [
 			// 	...previueMsgs.current,
@@ -234,19 +256,9 @@ export default function GameInterface() {
 		}
 	};
 
-	const getRandomRotation = () => (Math.random() - 0.5) * 5;
-
 	// useEffect(() => {
 	// 	mainControls.set({ x: 0, y: 0, opacity: 1 });
 	// }, [currentScenario]);
-
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
-
-	if (!currentScenario) {
-		return <div>Error loading scenario</div>;
-	}
 
 	return (
 		<div className="min-h-screen bg-black text-white flex flex-col overflow-hidden">
@@ -268,11 +280,14 @@ export default function GameInterface() {
 					}}
 				/>
 
+
 				<ChoiceOptions
 					currentScenario={currentScenario}
 					leftOpacity={leftOpacity}
 					rightOpacity={rightOpacity}
 				/>
+
+
 
 				<div className="mt-8 text-center font-mono">
 					<p className="text-2xl">2075</p>

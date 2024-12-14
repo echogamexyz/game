@@ -12,11 +12,11 @@ type ChoiceOptionsProps = {
 export function ChoiceOptions({ currentScenario, leftOpacity, rightOpacity }: ChoiceOptionsProps) {
     return (
         <div className="mt-8 flex flex-row gap-6 font-mono px-0 w-full justify-between md:text-xl z-10">
-            <motion.h1 style={{ opacity: leftOpacity }}>
-                {currentScenario.optionA.text}
+            <motion.h1 style={{ opacity: leftOpacity }} className="">
+                {currentScenario?.optionA?.text ?? "\u00A0"}
             </motion.h1>
             <motion.h1 style={{ opacity: rightOpacity }} className="text-right">
-                {currentScenario.optionB.text}
+                {currentScenario?.optionB?.text ?? "\u00A0"}
             </motion.h1>
         </div>
     );
