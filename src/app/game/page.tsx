@@ -154,7 +154,12 @@ export default function GameInterface() {
 		);
 		console.log("fetchNextScenario");
 
-		if (offset > 300 && velocity > 40 && !isAnimating) {
+		const isSwipingLeft = predictedX < 0;
+		const selectedScenario = isSwipingLeft
+			? choiseScenarios.current.optionA
+			: choiseScenarios.current.optionB;
+
+		if (offset > 300 && velocity > 40 && !isAnimating && selectedScenario) {
 			setIsAnimating(true);
 			const angle = Math.atan2(predictedY, predictedX);
 			const throwX = Math.cos(angle) * window.innerWidth * 1.5;
@@ -169,14 +174,15 @@ export default function GameInterface() {
 				transition: { duration: 1 },
 			});
 
-			const isSwipingLeft = predictedX < 0;
-			const selectedScenario = isSwipingLeft
-				? choiseScenarios.current.optionA
-				: choiseScenarios.current.optionB;
+
 
 			setCurrentScenario(selectedScenario);
 
 			["optionA", "optionB"].map((key) => {
+				choiseScenarios.current = {
+					...choiseScenarios.current,
+					[key]: null,
+				};
 				console.log(selectedScenario[key].id);
 				supabase.functions
 					.invoke("generateScenario", {
