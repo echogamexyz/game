@@ -198,48 +198,6 @@ export default function GameInterface() {
 					});
 			});
 
-			// previueMsgs.current = [
-			// 	...previueMsgs.current,
-			// 	{
-			// 		role: "user",
-			// 		content: isSwipingLeft
-			// 			? currentScenario.optionA
-			// 			: currentScenario.optionB,
-			// 	},
-			// 	{
-			// 		role: "assistant",
-			// 		content: selectedScenario.situation,
-			// 	},
-			// ];
-			// setCurrentScenario(selectedScenario);
-
-			// console.log("current", selectedScenario);
-
-			// setDayCount((prev) => prev + 1);
-
-			// ["optionA", "optionB"].map((key) => {
-			// 	// fetchNextScenario([
-			// 	//   ...previueMsgs.current,
-			// 	//   {
-			// 	//     role: "user",
-			// 	//     content: selectedScenario[key],
-			// 	//   },
-			// 	// ]).then((s) => {
-			// 	//   choiseScenarios.current = {
-			// 	//     ...choiseScenarios.current,
-			// 	//     [key]: normalizeScenario(s),
-			// 	//   };
-			// 	//   console.log(key, ":", s);
-			// 	// });
-			// });
-
-			// Move to next scenario
-			// setCurrentScenarioIndex(
-			// 	(prevIndex) => (prevIndex + 1) % scenarios.length
-			// );
-
-			// mainControls.set({ x: 0, y: 0, opacity: 1 });
-
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
 			x.set(0);
 			y.set(0);
