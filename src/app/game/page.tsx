@@ -240,6 +240,7 @@ export default function GameInterface() {
 					currentScenario={currentScenario}
 					leftOpacity={leftOpacity}
 					rightOpacity={rightOpacity}
+					isAnimating={isAnimating}
 				/>
 
 
