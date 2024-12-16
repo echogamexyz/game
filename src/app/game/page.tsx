@@ -42,9 +42,7 @@ export default function GameInterface() {
 		military: 50,
 		economy: 50,
 	});
-	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
-	// 	[]
-	// );
+
 	const [scenarios, setScenario] = useState([0, 1, 2, 3]);
 
 	const supabase = createClient();
@@ -132,7 +130,6 @@ export default function GameInterface() {
 		}
 	});
 
-	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
 	const handleDragEnd = async (
 		event: MouseEvent | TouchEvent | PointerEvent,
