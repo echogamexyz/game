@@ -155,6 +155,9 @@ export default function GameInterface() {
 		const selectedScenario = isSwipingLeft
 			? choiseScenarios.current.optionA
 			: choiseScenarios.current.optionB;
+		setCurrentScenario(selectedScenario);
+		setDayCount((prev) => prev + 1); //day count increment
+
 
 		if (offset > 300 && velocity > 40 && !isAnimating && selectedScenario) {
 			setIsAnimating(true);
