@@ -42,9 +42,7 @@ export default function GameInterface() {
 		military: 50,
 		economy: 50,
 	});
-	// const [scenarios] = useState<Database["public"]["Tables"]["games"]["Row"][]>(
-	// 	[]
-	// );
+
 	const [scenarios, setScenario] = useState([0, 1, 2, 3]);
 
 	const supabase = createClient();
@@ -132,7 +130,6 @@ export default function GameInterface() {
 		}
 	});
 
-	// const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
 	const handleDragEnd = async (
 		event: MouseEvent | TouchEvent | PointerEvent,
@@ -158,6 +155,9 @@ export default function GameInterface() {
 		const selectedScenario = isSwipingLeft
 			? choiseScenarios.current.optionA
 			: choiseScenarios.current.optionB;
+		setCurrentScenario(selectedScenario);
+		setDayCount((prev) => prev + 1); //day count increment
+
 
 		if (offset > 300 && velocity > 40 && !isAnimating && selectedScenario) {
 			setIsAnimating(true);
@@ -197,48 +197,6 @@ export default function GameInterface() {
 						};
 					});
 			});
-
-			// previueMsgs.current = [
-			// 	...previueMsgs.current,
-			// 	{
-			// 		role: "user",
-			// 		content: isSwipingLeft
-			// 			? currentScenario.optionA
-			// 			: currentScenario.optionB,
-			// 	},
-			// 	{
-			// 		role: "assistant",
-			// 		content: selectedScenario.situation,
-			// 	},
-			// ];
-			// setCurrentScenario(selectedScenario);
-
-			// console.log("current", selectedScenario);
-
-			// setDayCount((prev) => prev + 1);
-
-			// ["optionA", "optionB"].map((key) => {
-			// 	// fetchNextScenario([
-			// 	//   ...previueMsgs.current,
-			// 	//   {
-			// 	//     role: "user",
-			// 	//     content: selectedScenario[key],
-			// 	//   },
-			// 	// ]).then((s) => {
-			// 	//   choiseScenarios.current = {
-			// 	//     ...choiseScenarios.current,
-			// 	//     [key]: normalizeScenario(s),
-			// 	//   };
-			// 	//   console.log(key, ":", s);
-			// 	// });
-			// });
-
-			// Move to next scenario
-			// setCurrentScenarioIndex(
-			// 	(prevIndex) => (prevIndex + 1) % scenarios.length
-			// );
-
-			// mainControls.set({ x: 0, y: 0, opacity: 1 });
 
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
 			x.set(0);
@@ -285,6 +243,7 @@ export default function GameInterface() {
 					currentScenario={currentScenario}
 					leftOpacity={leftOpacity}
 					rightOpacity={rightOpacity}
+					isAnimating={isAnimating}
 				/>
 
 
