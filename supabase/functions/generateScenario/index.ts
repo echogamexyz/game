@@ -8,7 +8,7 @@ import { createAnthropic } from "npm:@ai-sdk/anthropic";
 import { corsHeaders } from "../_shared/cors.ts";
 
 const SYSTEMPROMPT =
-  "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Generate the NEXT scenario based on the previous scenario";
+  "Create a brief current event scenario (2-3 sentences) for a country leadership game. The user is the leader of a country, that is going downhill. Then provide exactly 2 response options, each between 1-4 words (these should be SUPER short). The response options should present different approaches to handling the situation. The below scenarios are the previous scenarios, Generate the NEXT scenario based on the previous scenario. If you at any point find it extremely unlikely, that the user will stay in power as the country's leader, then output GAMEOVER at the end of your response.";
 const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
 
 const SUPABASE_URL = Deno.env.get("URL") ?? Deno.env.get("SUPABASE_URL") ?? "";
