@@ -190,12 +190,20 @@ export default function GameInterface() {
 					})
 					.then((s) => {
 						console.log(key);
+						if (!s?.data?.data) {
+							console.error("s.data.data is null or undefined:", s);
+							return;
+						}
+						console.log(s.data.data);
 						console.log(s.data.data);
 						choiseScenarios.current = {
 							...choiseScenarios.current,
 							[key]: s.data.data,
 						};
+						
 					});
+					
+					
 			});
 
 			setCurrentScenarioIndex((prevIndex) => prevIndex + 1);
