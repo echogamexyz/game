@@ -2,7 +2,7 @@
   "version": "4",
   "specifiers": {
     "jsr:@supabase/supabase-js@^2.47.2": "2.47.2",
-    "npm:@ai-sdk/anthropic@^1.0.2": "1.0.2_zod@3.23.8",
+    "npm:@ai-sdk/openai@^1.0.8": "1.0.8_zod@3.23.8",
     "npm:@supabase/auth-js@2.66.1": "2.66.1",
     "npm:@supabase/functions-js@2.4.3": "2.4.3",
     "npm:@supabase/node-fetch@2.6.15": "2.6.15",
@@ -25,27 +25,27 @@
     }
   },
   "npm": {
-    "@ai-sdk/anthropic@1.0.2_zod@3.23.8": {
-      "integrity": "sha512-f3Z356AgUe6vcaUJuVY1+UWdUdhx/JzIADaQgybHSBRQ+OXOYs7AveKist01I6fBXGl3DPPbJJr/i0P888Izfg==",
+    "@ai-sdk/openai@1.0.8_zod@3.23.8": {
+      "integrity": "sha512-wcTHM9qgRWGYVO3WxPSTN/RwnZ9R5/17xyo61iUCCSCZaAuJyh6fKddO0/oamwDp3BG7g+4wbfAyuTo32H+fHw==",
       "dependencies": [
-        "@ai-sdk/provider",
-        "@ai-sdk/provider-utils@2.0.2_zod@3.23.8",
+        "@ai-sdk/provider@1.0.2",
+        "@ai-sdk/provider-utils@2.0.4_zod@3.23.8",
         "zod"
       ]
     },
     "@ai-sdk/provider-utils@2.0.2": {
       "integrity": "sha512-IAvhKhdlXqiSmvx/D4uNlFYCl8dWT+M9K+IuEcSgnE2Aj27GWu8sDIpAf4r4Voc+wOUkOECVKQhFo8g9pozdjA==",
       "dependencies": [
-        "@ai-sdk/provider",
+        "@ai-sdk/provider@1.0.1",
         "eventsource-parser",
         "nanoid",
         "secure-json-parse"
       ]
     },
-    "@ai-sdk/provider-utils@2.0.2_zod@3.23.8": {
-      "integrity": "sha512-IAvhKhdlXqiSmvx/D4uNlFYCl8dWT+M9K+IuEcSgnE2Aj27GWu8sDIpAf4r4Voc+wOUkOECVKQhFo8g9pozdjA==",
+    "@ai-sdk/provider-utils@2.0.4_zod@3.23.8": {
+      "integrity": "sha512-GMhcQCZbwM6RoZCri0MWeEWXRt/T+uCxsmHEsTwNvEH3GDjNzchfX25C8ftry2MeEOOn6KfqCLSKomcgK6RoOg==",
       "dependencies": [
-        "@ai-sdk/provider",
+        "@ai-sdk/provider@1.0.2",
         "eventsource-parser",
         "nanoid",
         "secure-json-parse",
@@ -54,6 +54,12 @@
     },
     "@ai-sdk/provider@1.0.1": {
       "integrity": "sha512-mV+3iNDkzUsZ0pR2jG0sVzU6xtQY5DtSCBy3JFycLp6PwjyLw/iodfL3MwdmMCRJWgs3dadcHejRnMvF9nGTBg==",
+      "dependencies": [
+        "json-schema"
+      ]
+    },
+    "@ai-sdk/provider@1.0.2": {
+      "integrity": "sha512-YYtP6xWQyaAf5LiWLJ+ycGTOeBLWrED7LUrvc+SQIWhGaneylqbaGsyQL7VouQUeQ4JZ1qKYZuhmi3W56HADPA==",
       "dependencies": [
         "json-schema"
       ]
@@ -70,7 +76,7 @@
     "@ai-sdk/ui-utils@1.0.2": {
       "integrity": "sha512-hHrUdeThGHu/rsGZBWQ9PjrAU9Htxgbo9MFyR5B/aWoNbBeXn1HLMY1+uMEnXL5pRPlmyVRjgIavWg7UgeNDOw==",
       "dependencies": [
-        "@ai-sdk/provider",
+        "@ai-sdk/provider@1.0.1",
         "@ai-sdk/provider-utils@2.0.2",
         "zod-to-json-schema"
       ]
@@ -138,7 +144,7 @@
     "ai@4.0.9": {
       "integrity": "sha512-25Ve05XJYjlV2os//J2WVITm8GXRRGgt9Y5vQyxnJJ6P4ttyH585Uc1fbOTh5tK1CEXTfn+Ml+Ux7oR9J8hImA==",
       "dependencies": [
-        "@ai-sdk/provider",
+        "@ai-sdk/provider@1.0.1",
         "@ai-sdk/provider-utils@2.0.2",
         "@ai-sdk/react",
         "@ai-sdk/ui-utils",
@@ -240,7 +246,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@supabase/supabase-js@^2.47.2",
-      "npm:@ai-sdk/anthropic@^1.0.2",
+      "npm:@ai-sdk/openai@^1.0.8",
       "npm:ai@^4.0.9"
     ]
   }

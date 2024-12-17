@@ -66,6 +66,11 @@ export default function StartPage() {
             </Link>
           </Button>
         </motion.div>
+        <footer>
+          <a target="_blank" rel="nonoopener noreferrer" href="https://echogame.xyz/privacy">
+            Privacy Policy
+          </a>
+        </footer>
       </div>
     </div>
   )
