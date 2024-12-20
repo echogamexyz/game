@@ -19,7 +19,7 @@ export function ChoiceOptions({ currentScenario, leftOpacity, rightOpacity, isAn
         if (!isAnimating) {
             setAnimate(false);
         } else {
-            console.log(leftOpacity.current, rightOpacity.current);
+            console.log(leftOpacity.get(), rightOpacity.get());
             setTimeout(() => {
                 setAnimate(true);
             }, 300);
